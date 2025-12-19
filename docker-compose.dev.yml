@@ -1,0 +1,82 @@
+# 纯开发环境基础设施配置
+# 包含：Postgres(pgvector), Redis, MongoDB
+# 以及管理工具：pgAdmin, Mongo Express
+# 
+# 启动命令: docker-compose -f docker-compose.dev.yml up -d
+
+services:
+  # --- 核心数据服务 ---
+  
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: talker_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: test1234
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7.0
+    container_name: talker_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_dev:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mongo:
+    image: mongo:6.0
+    container_name: talker_mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data_dev:/data/db
+
+  # --- 可视化管理工具 ---
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: talker_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@talker.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  mongo-express:
+    image: mongo-express
+    container_name: talker_mongo_express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH: "false"
+    depends_on:
+      - mongo
+
+volumes:
+  postgres_data_dev:
+  redis_data_dev:
+  mongo_data_dev:
