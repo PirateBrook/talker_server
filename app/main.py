@@ -4,7 +4,7 @@ from app.core.config import settings
 from app.api.v1.router import api_router
 from app.core.database import engine, Base
 # Import models to ensure they are registered with Base
-from app.models import user, vector_store
+from app.models import user, vector_store, character
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
