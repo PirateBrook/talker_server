@@ -13,5 +13,5 @@ class CharacterMemory(Base):
 
     # 建立 HNSW 索引以加速查询
     __table_args__ = (
-        Index('my_index', 'embedding', postgresql_using='hnsw', postgresql_with={'m': 16, 'ef_construction': 64}),
+        Index('my_index', 'embedding', postgresql_using='hnsw', postgresql_with={'m': 16, 'ef_construction': 64}, postgresql_ops={'embedding': 'vector_l2_ops'}),
     )

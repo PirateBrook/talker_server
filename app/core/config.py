@@ -5,6 +5,7 @@ from typing import Optional
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Talker Server"
     API_V1_STR: str = "/api/v1"
+    SECRET_KEY: str = "punkscosmos_talkerserver"
     
     # Postgres
     POSTGRES_SERVER: str = "localhost"
