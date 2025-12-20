@@ -44,6 +44,10 @@ class Settings(BaseSettings):
         if self.CELERY_RESULT_BACKEND is None:
             self.CELERY_RESULT_BACKEND = f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/1"
 
+    # Google OAuth
+    GOOGLE_CLIENT_ID: Optional[str] = None
+    GOOGLE_CLIENT_SECRET: Optional[str] = None
+
     class Config:
         env_file = ".env"
         case_sensitive = True
