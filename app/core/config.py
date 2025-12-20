@@ -48,6 +48,9 @@ class Settings(BaseSettings):
     # Google OAuth
     GOOGLE_CLIENT_ID: Optional[str] = None
     GOOGLE_CLIENT_SECRET: Optional[str] = None
+    
+    # OpenAI
+    OPENAI_API_KEY: Optional[str] = None
 
     class Config:
         env_file = ".env"

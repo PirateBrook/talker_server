@@ -15,6 +15,7 @@ dependencies = [
     "greenlet>=3.3.0",
     "httpx>=0.28.1",
     "langchain>=1.2.0",
+    "langchain-openai>=0.3.7",
     "motor>=3.7.1",
     "passlib>=1.7.4",
     "pgvector>=0.4.2",

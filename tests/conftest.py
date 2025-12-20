@@ -1,10 +1,13 @@
 import asyncio
 from typing import AsyncGenerator, Generator
+from contextlib import asynccontextmanager
 import os
 import re
 import sqlalchemy
 import pytest
 from httpx import AsyncClient, ASGITransport
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -64,3 +67,30 @@ async def client(db) -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
         yield c
     app.dependency_overrides.clear()
+
+@pytest.fixture(scope="function")
+def sync_client(db):
+    # Note: Using TestClient with async DB session from a different loop might cause issues.
+    # This is primarily for WebSocket tests where we might mock the DB interaction.
+    # If DB access is needed, we need to ensure loop compatibility or mock it.
+    
+    # We still override it to prevent it from creating a new engine/session that points to prod DB
+    # But since it's sync, we can't yield the async session easily.
+    # For now, we rely on mocks in tests using this.
+
+    # Override lifespan to avoid DB operations using the global engine which causes loop conflicts
+    # The db_engine fixture already handles table creation
+    from app.main import app
+    original_lifespan = app.router.lifespan_context
+
+    @asynccontextmanager
+    async def mock_lifespan(app: FastAPI):
+        yield
+
+    app.router.lifespan_context = mock_lifespan
+
+    with TestClient(app) as c:
+        yield c
+    
+    # Restore lifespan
+    app.router.lifespan_context = original_lifespan
