@@ -9,9 +9,10 @@ abstract class Message {
 /// Client-side Chat Message
 class ChatMessage extends Message {
   final String content;
-  final int characterId;
+  final String characterId;
 
-  ChatMessage({required this.content, required this.characterId}) : super('chat');
+  ChatMessage({required this.content, required this.characterId})
+      : super('chat');
 
   @override
   Map<String, dynamic> toJson() => {
@@ -24,7 +25,7 @@ class ChatMessage extends Message {
 /// Client-side Action Message
 class ActionMessage extends Message {
   final String actionId;
-  final int characterId;
+  final String characterId;
   final String? targetId;
   final Map<String, dynamic>? payload;
 

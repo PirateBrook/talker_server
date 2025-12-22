@@ -112,14 +112,14 @@ class TalkerClient {
   }
 
   /// Sends a chat message to the server.
-  void sendChat(String content, int characterId) {
+  void sendChat(String content, String characterId) {
     _ensureConnected();
     final msg = ChatMessage(content: content, characterId: characterId);
     _channel!.sink.add(jsonEncode(msg.toJson()));
   }
 
   /// Sends a game action to the server.
-  void sendAction(String actionId, int characterId, String targetId, [Map<String, dynamic>? payload]) {
+  void sendAction(String actionId, String characterId, String targetId, [Map<String, dynamic>? payload]) {
     _ensureConnected();
     final msg = ActionMessage(
       actionId: actionId,

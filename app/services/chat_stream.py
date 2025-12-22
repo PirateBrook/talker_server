@@ -203,7 +203,7 @@ class ChatManager:
                     )
 
         except WebSocketDisconnect:
-            logger.info(f"WebSocket disconnected for session {session_id}")
+            logger.info(f"WebSocket disconnected for session {session_id if session_id else connection_id}")
         except Exception as e:
             logger.error(f"WebSocket error: {e}", exc_info=True)
         finally:
