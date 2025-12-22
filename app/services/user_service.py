@@ -1,3 +1,4 @@
+import uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models.user import User
@@ -10,7 +11,7 @@ class UserService:
         result = await db.execute(select(User).filter(User.email == email))
         return result.scalars().first()
 
-    async def get(self, db: AsyncSession, user_id: int) -> Optional[User]:
+    async def get(self, db: AsyncSession, user_id: uuid.UUID) -> Optional[User]:
         result = await db.execute(select(User).filter(User.id == user_id))
         return result.scalars().first()
 

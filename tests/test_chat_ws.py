@@ -6,12 +6,13 @@ from app.core.config import settings
 from app.services.chat_stream import WebSocketCallbackHandler, chat_manager
 from app.api.v1.endpoints.chat import get_current_user_ws
 from app.core.database import get_db
+import uuid6
 from app.models.user import User
 
 # We don't need pytest.mark.asyncio here because TestClient is synchronous
 def test_websocket_chat_flow(sync_client: TestClient):
     # 1. Mock dependencies
-    mock_user = User(id=1, email="test@example.com", is_active=True)
+    mock_user = User(id=uuid6.uuid7(), email="test@example.com", is_active=True)
     
     # Override the WebSocket dependency
     async def mock_get_current_user_ws():
@@ -90,7 +91,7 @@ def test_websocket_chat_flow(sync_client: TestClient):
 
 def test_websocket_action_flow(sync_client: TestClient):
     # 1. Mock dependencies
-    mock_user = User(id=1, email="test@example.com", is_active=True)
+    mock_user = User(id=uuid6.uuid7(), email="test@example.com", is_active=True)
     async def mock_get_current_user_ws():
         return mock_user
     

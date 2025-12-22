@@ -13,6 +13,8 @@ from app.schemas.token import TokenPayload
 
 router = APIRouter()
 
+import uuid
+
 async def get_current_user_ws(
     websocket: WebSocket,
     token: str = Query(...),
@@ -31,7 +33,13 @@ async def get_current_user_ws(
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return None
 
-    user = await user_service.get(db, user_id=int(token_data.sub))
+    try:
+        user_uuid = uuid.UUID(token_data.sub)
+    except ValueError:
+         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+         return None
+
+    user = await user_service.get(db, user_id=user_uuid)
     if not user:
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return None

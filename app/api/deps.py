@@ -1,3 +1,4 @@
+import uuid
 from typing import AsyncGenerator, Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -36,8 +37,16 @@ async def get_current_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
+    
+    try:
+        user_uuid = uuid.UUID(token_data.sub)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
+        )
 
-    user = await user_service.get(db, user_id=int(token_data.sub))
+    user = await user_service.get(db, user_id=user_uuid)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     if not user.is_active:

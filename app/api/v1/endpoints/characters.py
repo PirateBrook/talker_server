@@ -1,3 +1,4 @@
+import uuid
 from typing import Any, List
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -36,7 +37,7 @@ async def create_character(
 async def read_character(
     *,
     db: AsyncSession = Depends(get_db),
-    character_id: int,
+    character_id: uuid.UUID,
 ) -> Any:
     """
     Get character by ID.
@@ -50,7 +51,7 @@ async def read_character(
 async def update_character(
     *,
     db: AsyncSession = Depends(get_db),
-    character_id: int,
+    character_id: uuid.UUID,
     character_in: CharacterUpdate,
 ) -> Any:
     """
@@ -66,7 +67,7 @@ async def update_character(
 async def delete_character(
     *,
     db: AsyncSession = Depends(get_db),
-    character_id: int,
+    character_id: uuid.UUID,
 ) -> Any:
     """
     Delete a character (soft delete).

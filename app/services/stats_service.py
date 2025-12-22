@@ -3,6 +3,7 @@ from sqlalchemy import select, func, and_
 from app.models.interaction import CharacterStats, CharacterRating, CharacterFollow, CharacterChatInteraction
 from app.models.character import Character
 from fastapi import HTTPException
+import uuid
 
 class StatsService:
     async def get_stats(self, db: AsyncSession, character_id: int) -> CharacterStats:
@@ -21,7 +22,7 @@ class StatsService:
             await db.refresh(stats)
         return stats
 
-    async def record_chat(self, db: AsyncSession, character_id: int, user_id: int):
+    async def record_chat(self, db: AsyncSession, character_id: int, user_id: str):
         stats = await self.get_stats(db, character_id)
         
         # 1. Update turn count
@@ -49,7 +50,7 @@ class StatsService:
         await db.refresh(stats)
         return stats
 
-    async def rate_character(self, db: AsyncSession, character_id: int, user_id: int, rating: int):
+    async def rate_character(self, db: AsyncSession, character_id: int, user_id: str, rating: int):
         stats = await self.get_stats(db, character_id)
         
         # Check existing rating
@@ -84,7 +85,7 @@ class StatsService:
         await db.refresh(stats)
         return stats
 
-    async def follow_character(self, db: AsyncSession, character_id: int, user_id: int) -> bool:
+    async def follow_character(self, db: AsyncSession, character_id: int, user_id: str) -> bool:
         """Returns True if followed, False if already following (idempotent-ish)"""
         stats = await self.get_stats(db, character_id)
         
@@ -108,7 +109,7 @@ class StatsService:
         await db.commit()
         return True
 
-    async def unfollow_character(self, db: AsyncSession, character_id: int, user_id: int) -> bool:
+    async def unfollow_character(self, db: AsyncSession, character_id: int, user_id: str) -> bool:
         stats = await self.get_stats(db, character_id)
         
         result = await db.execute(
@@ -130,7 +131,7 @@ class StatsService:
         await db.commit()
         return True
 
-    async def is_following(self, db: AsyncSession, character_id: int, user_id: int) -> bool:
+    async def is_following(self, db: AsyncSession, character_id: int, user_id: str) -> bool:
         result = await db.execute(
             select(CharacterFollow).filter(
                 CharacterFollow.character_id == character_id,

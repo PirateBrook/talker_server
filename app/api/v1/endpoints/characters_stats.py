@@ -1,6 +1,7 @@
 from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+import uuid
 
 from app.core.database import get_db
 from app.api.deps import get_current_user
@@ -14,7 +15,7 @@ router = APIRouter()
 async def get_character_stats(
     *,
     db: AsyncSession = Depends(get_db),
-    character_id: int,
+    character_id: uuid.UUID,
 ) -> Any:
     """
     Get statistics for a character.
@@ -25,7 +26,7 @@ async def get_character_stats(
 async def rate_character(
     *,
     db: AsyncSession = Depends(get_db),
-    character_id: int,
+    character_id: uuid.UUID,
     rating_in: RateCharacterRequest,
     current_user: User = Depends(get_current_user),
 ) -> Any:
@@ -58,7 +59,7 @@ async def follow_character(
 async def unfollow_character(
     *,
     db: AsyncSession = Depends(get_db),
-    character_id: int,
+    character_id: uuid.UUID,
     current_user: User = Depends(get_current_user),
 ) -> Any:
     """

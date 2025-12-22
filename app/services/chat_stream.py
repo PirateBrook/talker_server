@@ -22,6 +22,7 @@ from app.schemas.protocol import (
 from app.schemas.chat_log import ChatLog
 from app.models.character import Character
 from app.models.vector_store import CharacterMemory
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +90,7 @@ class ChatManager:
             model="text-embedding-3-small" # Using a cheaper/newer model if available, or ada-002
         )
 
-    async def get_rag_context(self, db: AsyncSession, character_id: int, query: str, limit: int = 3) -> str:
+    async def get_rag_context(self, db: AsyncSession, character_id: uuid.UUID, query: str, limit: int = 3) -> str:
         """Retrieve relevant memories or knowledge from vector store."""
         try:
             # Generate embedding
@@ -115,7 +116,7 @@ class ChatManager:
             logger.error(f"Error retrieving RAG context: {e}")
             return ""
 
-    async def get_character_system_prompt(self, db: AsyncSession, character_id: int) -> str:
+    async def get_character_system_prompt(self, db: AsyncSession, character_id: uuid.UUID) -> str:
         """Build system prompt based on character profile."""
         stmt = select(Character).where(Character.id == character_id)
         result = await db.execute(stmt)
@@ -140,7 +141,7 @@ class ChatManager:
     async def handle_websocket(
         self, 
         websocket: WebSocket, 
-        user_id: int, 
+        user_id: uuid.UUID, 
         db: AsyncSession
     ):
         await websocket.accept()
@@ -214,7 +215,7 @@ class ChatManager:
         msg: ChatMessage, 
         websocket: WebSocket, 
         session_id: str, 
-        user_id: int, 
+        user_id: uuid.UUID, 
         character_id: int,
         stream_handler: WebSocketCallbackHandler,
         db: AsyncSession
@@ -222,7 +223,7 @@ class ChatManager:
         # 1. Save User Message to MongoDB
         user_log = ChatLog(
             session_id=session_id,
-            user_id=user_id,
+            user_id=str(user_id),
             character_id=character_id,
             role="user",
             content=msg.content
@@ -266,7 +267,7 @@ class ChatManager:
         # 6. Save AI Message to MongoDB
         ai_log = ChatLog(
             session_id=session_id,
-            user_id=user_id,
+            user_id=str(user_id),
             character_id=character_id,
             role="ai",
             content=ai_content
@@ -289,14 +290,14 @@ class ChatManager:
         msg: ActionMessage, 
         websocket: WebSocket, 
         session_id: str, 
-        user_id: int, 
-        character_id: int,
+        user_id: uuid.UUID, 
+        character_id: uuid.UUID,
         db: AsyncSession
     ):
         # 1. Log Action
         action_log = ChatLog(
             session_id=session_id,
-            user_id=user_id,
+            user_id=str(user_id),
             character_id=character_id,
             role="user",
             content=f"[ACTION] {msg.action_id} on {msg.target_id}",

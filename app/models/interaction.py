@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, Float, ForeignKey, DateTime, UniqueConstraint
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.core.database import Base
@@ -6,7 +7,7 @@ from app.core.database import Base
 class CharacterStats(Base):
     __tablename__ = "character_stats"
 
-    character_id = Column(Integer, ForeignKey("characters.id"), primary_key=True)
+    character_id = Column(UUID(as_uuid=True), ForeignKey("characters.id"), primary_key=True)
     
     chat_user_count = Column(Integer, default=0)
     chat_turn_count = Column(Integer, default=0)
@@ -26,8 +27,8 @@ class CharacterRating(Base):
     __tablename__ = "character_ratings"
     
     id = Column(Integer, primary_key=True, index=True)
-    character_id = Column(Integer, ForeignKey("characters.id"), index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    character_id = Column(UUID(as_uuid=True), ForeignKey("characters.id"), index=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), index=True)
     rating = Column(Integer, nullable=False) # 1-5
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
@@ -39,8 +40,8 @@ class CharacterFollow(Base):
     __tablename__ = "character_follows"
     
     id = Column(Integer, primary_key=True, index=True)
-    character_id = Column(Integer, ForeignKey("characters.id"), index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    character_id = Column(UUID(as_uuid=True), ForeignKey("characters.id"), index=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     __table_args__ = (
@@ -52,8 +53,8 @@ class CharacterChatInteraction(Base):
     __tablename__ = "character_chat_interactions"
     
     id = Column(Integer, primary_key=True, index=True)
-    character_id = Column(Integer, ForeignKey("characters.id"), index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    character_id = Column(UUID(as_uuid=True), ForeignKey("characters.id"), index=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), index=True)
     last_chat_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     
     __table_args__ = (

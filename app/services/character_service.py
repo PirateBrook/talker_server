@@ -1,3 +1,4 @@
+import uuid
 from typing import List, Optional, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
@@ -21,7 +22,7 @@ class CharacterService:
     def __init__(self, trait_strategy: TraitStrategy = DefaultTraitStrategy()):
         self.trait_strategy = trait_strategy
 
-    async def get(self, db: AsyncSession, character_id: int) -> Optional[Character]:
+    async def get(self, db: AsyncSession, character_id: uuid.UUID) -> Optional[Character]:
         result = await db.execute(
             select(Character)
             .options(selectinload(Character.tags), selectinload(Character.dialogue_samples))
@@ -108,7 +109,7 @@ class CharacterService:
         await db.refresh(db_obj)
         return await self.get(db, db_obj.id)
 
-    async def remove(self, db: AsyncSession, *, id: int) -> Optional[Character]:
+    async def remove(self, db: AsyncSession, *, id: uuid.UUID) -> Optional[Character]:
         # Soft delete
         obj = await self.get(db, id)
         if obj:

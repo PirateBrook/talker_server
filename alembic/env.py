@@ -12,6 +12,8 @@ from app.core.database import Base
 from app.core.config import settings
 from app.models.user import User # Import models to register them
 from app.models.vector_store import CharacterMemory
+from app.models.character import Character
+from app.models.interaction import CharacterStats, CharacterRating, CharacterFollow, CharacterChatInteraction
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

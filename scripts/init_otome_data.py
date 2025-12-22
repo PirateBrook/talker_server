@@ -6,11 +6,36 @@ from datetime import datetime
 # Add project root to path
 sys.path.append(os.getcwd())
 
-from sqlalchemy import select
-from app.core.database import SessionLocal
+from sqlalchemy import select, text
+from app.core.database import SessionLocal, engine, Base
+
+# Import all models to ensure they are registered with Base.metadata
 from app.models.character import Character, Tag, DialogueSample
+from app.models.interaction import CharacterStats, CharacterRating, CharacterFollow, CharacterChatInteraction
+from app.models.user import User
+from app.models.vector_store import CharacterMemory
+
+async def reset_database():
+    print("Resetting database...")
+    async with engine.begin() as conn:
+        # Drop schema public cascade to remove EVERYTHING including unknown tables like chat_sessions
+        await conn.execute(text("DROP SCHEMA public CASCADE"))
+        await conn.execute(text("CREATE SCHEMA public"))
+        # Grant permissions (standard for Postgres)
+        await conn.execute(text("GRANT ALL ON SCHEMA public TO postgres"))
+        await conn.execute(text("GRANT ALL ON SCHEMA public TO public"))
+        
+        # Enable vector extension
+        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+        
+        # Create all tables
+        await conn.run_sync(Base.metadata.create_all)
+    print("Database reset complete.")
 
 async def init_data():
+    # Reset database first
+    await reset_database()
+
     async with SessionLocal() as db:
         print("Starting Otome NPC data initialization...")
         

@@ -1,3 +1,4 @@
+import uuid
 from enum import Enum
 from typing import Optional, Union, Dict, Any, Literal
 from pydantic import BaseModel, Field
@@ -15,12 +16,12 @@ class BaseClientMessage(BaseModel):
 
 class ChatMessage(BaseClientMessage):
     type: Literal[MessageType.CHAT] = MessageType.CHAT
-    character_id: int
+    character_id: uuid.UUID
     content: str
 
 class ActionMessage(BaseClientMessage):
     type: Literal[MessageType.ACTION] = MessageType.ACTION
-    character_id: int
+    character_id: uuid.UUID
     action_id: str
     target_id: Optional[str] = None
     payload: Optional[Dict[str, Any]] = None
@@ -38,7 +39,7 @@ class ServerMessageType(str, Enum):
 
 class BaseServerMessage(BaseModel):
     type: ServerMessageType
-    character_id: Optional[int] = None # Server response should indicate which character it relates to
+    character_id: Optional[uuid.UUID] = None # Server response should indicate which character it relates to
     timestamp: float = Field(default_factory=lambda: datetime.now().timestamp())
 
 class AIStatusMessage(BaseServerMessage):

@@ -1,13 +1,15 @@
 from sqlalchemy import Column, Integer, String, Boolean, Text, DateTime, ForeignKey, Table, JSON
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.core.database import Base
+import uuid6
 
 # Association table for Character-Tag
 character_tags = Table(
     'character_tags',
     Base.metadata,
-    Column('character_id', Integer, ForeignKey('characters.id'), primary_key=True),
+    Column('character_id', UUID(as_uuid=True), ForeignKey('characters.id'), primary_key=True),
     Column('tag_id', Integer, ForeignKey('tags.id'), primary_key=True)
 )
 
@@ -19,7 +21,7 @@ class Tag(Base):
 class DialogueSample(Base):
     __tablename__ = "dialogue_samples"
     id = Column(Integer, primary_key=True, index=True)
-    character_id = Column(Integer, ForeignKey('characters.id'))
+    character_id = Column(UUID(as_uuid=True), ForeignKey('characters.id'))
     input_text = Column(Text)
     output_text = Column(Text)
     
@@ -28,7 +30,7 @@ class DialogueSample(Base):
 class Character(Base):
     __tablename__ = "characters"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid6.uuid7, index=True)
     name = Column(String, index=True, nullable=False)
     description = Column(String, nullable=True) # Short bio
     

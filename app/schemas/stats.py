@@ -1,3 +1,4 @@
+import uuid
 from pydantic import BaseModel, Field
 from typing import Optional
 
@@ -9,7 +10,7 @@ class CharacterStatsBase(BaseModel):
     rating_count: int = 0
 
 class CharacterStats(CharacterStatsBase):
-    character_id: int
+    character_id: uuid.UUID
     class Config:
         from_attributes = True
 

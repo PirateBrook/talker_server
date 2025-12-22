@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from pydantic import BaseModel, Field
@@ -24,7 +25,7 @@ class DialogueSampleCreate(DialogueSampleBase):
 
 class DialogueSample(DialogueSampleBase):
     id: int
-    character_id: Optional[int] = None
+    character_id: Optional[uuid.UUID] = None
     class Config:
         from_attributes = True
 
@@ -53,7 +54,7 @@ class CharacterUpdate(BaseModel):
     tags: Optional[List[str]] = None
     
 class Character(CharacterBase):
-    id: int
+    id: uuid.UUID
     is_active: bool
     created_at: datetime
     updated_at: datetime

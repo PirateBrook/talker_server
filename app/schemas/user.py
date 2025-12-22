@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional
 from pydantic import BaseModel, EmailStr
 
@@ -23,7 +24,7 @@ class UserUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 class UserInDBBase(UserBase):
-    id: int
+    id: uuid.UUID
 
     class Config:
         from_attributes = True
