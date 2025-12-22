@@ -38,10 +38,9 @@ async def get_current_user_ws(
         
     return user
 
-@router.websocket("/ws/{character_id}")
+@router.websocket("/ws")
 async def websocket_endpoint(
     websocket: WebSocket,
-    character_id: int,
     current_user = Depends(get_current_user_ws),
     db: AsyncSession = Depends(get_db)
 ):
@@ -51,6 +50,5 @@ async def websocket_endpoint(
     await chat_manager.handle_websocket(
         websocket=websocket,
         user_id=current_user.id,
-        character_id=character_id,
         db=db
     )

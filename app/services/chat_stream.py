@@ -141,11 +141,10 @@ class ChatManager:
         self, 
         websocket: WebSocket, 
         user_id: int, 
-        character_id: int,
         db: AsyncSession
     ):
         await websocket.accept()
-        session_id = f"{user_id}_{character_id}_{int(datetime.now().timestamp())}"
+        connection_id = f"{user_id}_{int(datetime.now().timestamp())}"
         
         # Callback handler for this specific connection
         stream_handler = WebSocketCallbackHandler(websocket)
@@ -160,12 +159,29 @@ class ChatManager:
                     
                     if msg_type == MessageType.CHAT:
                         client_msg = ChatMessage(**msg_dict)
+                        # Derive session_id for this character conversation
+                        # Using a persistent session key: user_id + character_id
+                        # But for now, to keep history separate per connection (if desired), we can use connection_id + character_id
+                        # Let's stick to user_id + character_id for persistence across connections if that's the goal of "multiplexing" usually implies efficiency, not necessarily persistence change.
+                        # But the previous implementation had timestamp in session_id.
+                        # Let's use f"{user_id}_{character_id}" as the base for history, 
+                        # but for the `session_id` used in logging, maybe we want it unique per interaction?
+                        # Let's use f"{user_id}_{character_id}_{int(datetime.now().timestamp())}" effectively meaning new session per message? No, that breaks context.
+                        # We need a stable session ID for the duration of this connection.
+                        
+                        character_id = client_msg.character_id
+                        # Use connection_id as base, append character_id to make it unique per character stream
+                        session_id = f"{connection_id}_{character_id}"
+
                         await self.process_chat_message(
                             client_msg, websocket, session_id, user_id, character_id, stream_handler, db
                         )
                     
                     elif msg_type == MessageType.ACTION:
                         client_msg = ActionMessage(**msg_dict)
+                        character_id = client_msg.character_id
+                        session_id = f"{connection_id}_{character_id}"
+
                         await self.process_action_message(
                             client_msg, websocket, session_id, user_id, character_id, db
                         )

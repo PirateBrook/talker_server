@@ -57,10 +57,11 @@ def test_websocket_chat_flow(sync_client: TestClient):
 
             # 3. Connect WebSocket
             # Token can be dummy since we overrode the dependency
-            with sync_client.websocket_connect(f"{settings.API_V1_STR}/chat/ws/1?token=dummy") as websocket:
+            with sync_client.websocket_connect(f"{settings.API_V1_STR}/chat/ws?token=dummy") as websocket:
                 # Send Chat Message
                 websocket.send_json({
                     "type": "chat",
+                    "character_id": 1,
                     "content": "Hi there"
                 })
                 
@@ -104,10 +105,11 @@ def test_websocket_action_flow(sync_client: TestClient):
             mock_mongo.insert_one = AsyncMock()
             
             # 3. Connect WebSocket
-            with sync_client.websocket_connect(f"{settings.API_V1_STR}/chat/ws/1?token=dummy") as websocket:
+            with sync_client.websocket_connect(f"{settings.API_V1_STR}/chat/ws?token=dummy") as websocket:
                 # Send Action Message
                 websocket.send_json({
                     "type": "action",
+                    "character_id": 1,
                     "action_id": "inspect",
                     "target_id": "item_123"
                 })

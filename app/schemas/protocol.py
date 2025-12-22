@@ -15,10 +15,12 @@ class BaseClientMessage(BaseModel):
 
 class ChatMessage(BaseClientMessage):
     type: Literal[MessageType.CHAT] = MessageType.CHAT
+    character_id: int
     content: str
 
 class ActionMessage(BaseClientMessage):
     type: Literal[MessageType.ACTION] = MessageType.ACTION
+    character_id: int
     action_id: str
     target_id: Optional[str] = None
     payload: Optional[Dict[str, Any]] = None
@@ -36,6 +38,7 @@ class ServerMessageType(str, Enum):
 
 class BaseServerMessage(BaseModel):
     type: ServerMessageType
+    character_id: Optional[int] = None # Server response should indicate which character it relates to
     timestamp: float = Field(default_factory=lambda: datetime.now().timestamp())
 
 class AIStatusMessage(BaseServerMessage):
