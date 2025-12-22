@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from motor.motor_asyncio import AsyncIOMotorClient
 from redis.asyncio import Redis
 from app.core.config import settings
+from bson import UuidRepresentation
 
 # SQLAlchemy (Postgres)
 engine = create_async_engine(settings.SQLALCHEMY_DATABASE_URI, echo=True)
@@ -14,7 +15,7 @@ async def get_db():
         yield session
 
 # MongoDB
-mongo_client = AsyncIOMotorClient(settings.MONGO_URI)
+mongo_client = AsyncIOMotorClient(settings.MONGO_URI, uuidRepresentation='standard')
 mongo_db = mongo_client[settings.MONGO_DB]
 
 # Redis
