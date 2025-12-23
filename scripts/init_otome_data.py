@@ -33,6 +33,8 @@ async def reset_database():
         await conn.run_sync(Base.metadata.create_all)
     print("Database reset complete.")
 
+import uuid
+
 async def init_data():
     # Reset database first
     await reset_database()
@@ -43,6 +45,7 @@ async def init_data():
         # Define Data
         characters_data = [
             {
+                "id": uuid.UUID("019b44cc-bd28-70b5-81af-2fd76a9b7dd9"), # Fixed UUID
                 "name": "顾渊 (Gu Yuan)",
                 "description": "28岁，跨国集团CEO，冷峻严苛的完美主义者。",
                 "personality": "严谨自律，毒舌傲娇，行动派。崇尚'行动大于言语'，虽然嘴上不饶人，但实际上非常护短。",
@@ -66,6 +69,7 @@ async def init_data():
                 ]
             },
             {
+                "id": uuid.UUID("019b44cc-bd29-745b-a8f6-2cd05f3588c5"), # Fixed UUID
                 "name": "林星河 (Lin Xinghe)",
                 "description": "24岁，新锐摄影师，阳光开朗的邻家大男孩。",
                 "personality": "乐观热情，守护欲强，直球系。像小太阳一样温暖，永远充满正能量，但在涉及玩家安全时会变得异常强势。",
@@ -89,6 +93,7 @@ async def init_data():
                 ]
             },
             {
+                "id": uuid.UUID("019b44cc-bd2a-798b-ac67-324821221527"), # Fixed UUID
                 "name": "莫离 (Mo Li)",
                 "description": "外表26岁，天才画师，神秘莫测的艺术疯子。",
                 "personality": "慵懒魅惑，若即若离，神秘危险。善于通过语言诱导和心理博弈，让人捉摸不透他的真心。",
