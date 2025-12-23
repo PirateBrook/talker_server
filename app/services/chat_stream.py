@@ -24,123 +24,17 @@ from app.models.character import Character
 from app.models.vector_store import CharacterMemory
 from app.models.chat_session import ChatSession
 from app.services.session_service import session_service
+from app.services.callbacks import WebSocketCallbackHandler
+from app.services.chat_agent import chat_agent
 import uuid
 
 logger = logging.getLogger(__name__)
-
-class WebSocketCallbackHandler(AsyncCallbackHandler):
-    """Callback handler that streams LLM tokens to a WebSocket."""
-    
-    def __init__(self, websocket: WebSocket):
-        self.websocket = websocket
-        self.seq = 0
-        self.accumulated_content = ""
-
-    async def on_llm_start(
-        self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any
-    ) -> None:
-        """Run when LLM starts running."""
-        self.seq = 0
-        self.accumulated_content = ""
-        await self.websocket.send_text(
-            AIStatusMessage(status="thinking").model_dump_json()
-        )
-
-    async def on_llm_new_token(self, token: str, **kwargs: Any) -> None:
-        """Run on new LLM token. Only available when streaming is enabled."""
-        self.seq += 1
-        self.accumulated_content += token
-        try:
-            await self.websocket.send_text(
-                AIChunkMessage(content=token, seq=self.seq).model_dump_json()
-            )
-        except RuntimeError:
-            # WebSocket might be closed
-            pass
-
-    async def on_llm_end(self, response: Any, **kwargs: Any) -> None:
-        """Run when LLM ends running."""
-        try:
-            await self.websocket.send_text(
-                AIEndMessage(full_content=self.accumulated_content).model_dump_json()
-            )
-        except RuntimeError:
-            pass
-
-    async def on_llm_error(self, error: BaseException, **kwargs: Any) -> None:
-        """Run when LLM errors."""
-        try:
-            await self.websocket.send_text(
-                ErrorMessage(code="LLM_ERROR", message=str(error)).model_dump_json()
-            )
-        except RuntimeError:
-            pass
 
 class ChatManager:
     def __init__(self):
         self.redis = redis_client
         self.mongo_collection: AsyncIOMotorCollection = mongo_db["chat_logs"]
-        # Initialize LLM (Ensure OPENAI_API_KEY is set in env or settings)
-        self.llm = ChatOpenAI(
-            api_key=settings.OPENAI_API_KEY,
-            streaming=True,
-            temperature=0.7,
-            model="gpt-4" # Configurable
-        )
-        self.embeddings = OpenAIEmbeddings(
-            api_key=settings.OPENAI_API_KEY,
-            model="text-embedding-3-small" # Using a cheaper/newer model if available, or ada-002
-        )
-
-    async def get_rag_context(self, db: AsyncSession, character_id: uuid.UUID, query: str, limit: int = 3, session_id: Optional[str] = None) -> str:
-        """Retrieve relevant memories or knowledge from vector store.
-           TODO: Add session_id filtering for episodic memory if needed.
-        """
-        try:
-            # Generate embedding
-            # OpenAIEmbeddings.embed_query is synchronous, run in thread
-            embedding = await asyncio.to_thread(self.embeddings.embed_query, query)
-            
-            # Search in DB
-            stmt = select(CharacterMemory).where(
-                CharacterMemory.character_id == character_id
-            ).order_by(
-                CharacterMemory.embedding.l2_distance(embedding)
-            ).limit(limit)
-            
-            result = await db.execute(stmt)
-            memories = result.scalars().all()
-            
-            if not memories:
-                return ""
-                
-            context_str = "\n".join([f"- {m.content}" for m in memories])
-            return f"\nRelevant Memories/Context:\n{context_str}\n"
-        except Exception as e:
-            logger.error(f"Error retrieving RAG context: {e}")
-            return ""
-
-    async def get_character_system_prompt(self, db: AsyncSession, character_id: uuid.UUID) -> str:
-        """Build system prompt based on character profile."""
-        stmt = select(Character).where(Character.id == character_id)
-        result = await db.execute(stmt)
-        character = result.scalar_one_or_none()
-        
-        if not character:
-            return "You are a helpful AI assistant in a game."
-            
-        prompt = f"You are {character.name}.\n"
-        if character.description:
-            prompt += f"Description: {character.description}\n"
-        if character.personality:
-            prompt += f"Personality: {character.personality}\n"
-        if character.backstory:
-            prompt += f"Backstory: {character.backstory}\n"
-        if character.voice_style:
-            prompt += f"Speaking Style: {character.voice_style}\n"
-            
-        prompt += "\nRespond in character. Keep responses concise and engaging. Do not break character."
-        return prompt
+        self.agent = chat_agent
 
     async def handle_websocket(
         self, 
@@ -165,15 +59,6 @@ class ChatManager:
                     
                     if msg_type == MessageType.CHAT:
                         client_msg = ChatMessage(**msg_dict)
-                        # Derive session_id for this character conversation
-                        # Using a persistent session key: user_id + character_id
-                        # But for now, to keep history separate per connection (if desired), we can use connection_id + character_id
-                        # Let's stick to user_id + character_id for persistence across connections if that's the goal of "multiplexing" usually implies efficiency, not necessarily persistence change.
-                        # But the previous implementation had timestamp in session_id.
-                        # Let's use f"{user_id}_{character_id}" as the base for history, 
-                        # but for the `session_id` used in logging, maybe we want it unique per interaction?
-                        # Let's use f"{user_id}_{character_id}_{int(datetime.now().timestamp())}" effectively meaning new session per message? No, that breaks context.
-                        # We need a stable session ID for the duration of this connection.
                         
                         character_id = client_msg.character_id
                         
@@ -226,7 +111,7 @@ class ChatManager:
         websocket: WebSocket, 
         session_id: str, 
         user_id: uuid.UUID, 
-        character_id: int,
+        character_id: uuid.UUID,
         stream_handler: WebSocketCallbackHandler,
         db: AsyncSession
     ):
@@ -243,36 +128,16 @@ class ChatManager:
         # 2. Retrieve History from Redis
         redis_key = f"chat:context:{session_id}"
         history_json = await self.redis.lrange(redis_key, 0, -1)
-        history: List[BaseMessage] = []
         
-        # 3. Build System Prompt & Context
-        system_prompt = await self.get_character_system_prompt(db, character_id)
-        
-        # 4. RAG Retrieval
-        rag_context = await self.get_rag_context(db, character_id, msg.content, session_id=session_id)
-        if rag_context:
-            system_prompt += rag_context
-            
-        history.append(SystemMessage(content=system_prompt))
-        
-        for h in history_json:
-            msg_data = json.loads(h)
-            if msg_data["type"] == "human":
-                history.append(HumanMessage(content=msg_data["content"]))
-            elif msg_data["type"] == "ai":
-                history.append(AIMessage(content=msg_data["content"]))
-        
-        # Add current user message
-        history.append(HumanMessage(content=msg.content))
-
-        # 5. Call LLM with Streaming
-        # We use aconfig to pass callbacks
-        response = await self.llm.ainvoke(
-            history,
-            config={"callbacks": [stream_handler]}
+        # 3. Run Agent Logic
+        ai_content = await self.agent.run(
+            db,
+            character_id,
+            session_id,
+            msg.content,
+            history_json,
+            stream_handler
         )
-        
-        ai_content = response.content
 
         # 6. Save AI Message to MongoDB
         ai_log = ChatLog(
