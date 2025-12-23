@@ -14,6 +14,7 @@ from app.models.character import Character, Tag, DialogueSample
 from app.models.interaction import CharacterStats, CharacterRating, CharacterFollow, CharacterChatInteraction
 from app.models.user import User
 from app.models.vector_store import CharacterMemory
+from app.models.chat_session import ChatSession
 
 async def reset_database():
     print("Resetting database...")

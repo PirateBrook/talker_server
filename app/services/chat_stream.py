@@ -22,6 +22,8 @@ from app.schemas.protocol import (
 from app.schemas.chat_log import ChatLog
 from app.models.character import Character
 from app.models.vector_store import CharacterMemory
+from app.models.chat_session import ChatSession
+from app.services.session_service import session_service
 import uuid
 
 logger = logging.getLogger(__name__)
@@ -90,8 +92,10 @@ class ChatManager:
             model="text-embedding-3-small" # Using a cheaper/newer model if available, or ada-002
         )
 
-    async def get_rag_context(self, db: AsyncSession, character_id: uuid.UUID, query: str, limit: int = 3) -> str:
-        """Retrieve relevant memories or knowledge from vector store."""
+    async def get_rag_context(self, db: AsyncSession, character_id: uuid.UUID, query: str, limit: int = 3, session_id: Optional[str] = None) -> str:
+        """Retrieve relevant memories or knowledge from vector store.
+           TODO: Add session_id filtering for episodic memory if needed.
+        """
         try:
             # Generate embedding
             # OpenAIEmbeddings.embed_query is synchronous, run in thread
@@ -146,6 +150,7 @@ class ChatManager:
     ):
         await websocket.accept()
         connection_id = f"{user_id}_{int(datetime.now().timestamp())}"
+        session_id = None
         
         # Callback handler for this specific connection
         stream_handler = WebSocketCallbackHandler(websocket)
@@ -171,8 +176,10 @@ class ChatManager:
                         # We need a stable session ID for the duration of this connection.
                         
                         character_id = client_msg.character_id
-                        # Use connection_id as base, append character_id to make it unique per character stream
-                        session_id = f"{connection_id}_{character_id}"
+                        
+                        # Get or create active session
+                        active_session = await session_service.get_active_session(db, user_id, character_id)
+                        session_id = str(active_session.id)
 
                         await self.process_chat_message(
                             client_msg, websocket, session_id, user_id, character_id, stream_handler, db
@@ -181,7 +188,10 @@ class ChatManager:
                     elif msg_type == MessageType.ACTION:
                         client_msg = ActionMessage(**msg_dict)
                         character_id = client_msg.character_id
-                        session_id = f"{connection_id}_{character_id}"
+                        
+                        # Get active session for action context too
+                        active_session = await session_service.get_active_session(db, user_id, character_id)
+                        session_id = str(active_session.id)
 
                         await self.process_action_message(
                             client_msg, websocket, session_id, user_id, character_id, db
@@ -239,7 +249,7 @@ class ChatManager:
         system_prompt = await self.get_character_system_prompt(db, character_id)
         
         # 4. RAG Retrieval
-        rag_context = await self.get_rag_context(db, character_id, msg.content)
+        rag_context = await self.get_rag_context(db, character_id, msg.content, session_id=session_id)
         if rag_context:
             system_prompt += rag_context
             
