@@ -132,6 +132,8 @@ def test_websocket_action_flow(sync_client: TestClient):
                 
                 # Receive Game Event
                 event_msg = websocket.receive_json()
+                if event_msg["type"] == "error":
+                    print(f"DEBUG ERROR: {event_msg}")
                 assert event_msg["type"] == "game_event"
                 assert event_msg["event_type"] == "action_result"
                 assert event_msg["payload"]["action"] == "inspect"

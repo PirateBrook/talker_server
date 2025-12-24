@@ -10,7 +10,7 @@ class MessageRecord(MessageContentMixin):
     id: str = Field(default_factory=lambda: str(uuid6.uuid7()))
     session_id: str
     user_id: str
-    character_id: uuid.UUID
+    character_id: str
     role: str  # "user" | "ai" | "system"
     # content, content_type, metadata inherited from MessageContentMixin
     action_type: Optional[str] = None

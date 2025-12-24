@@ -25,6 +25,7 @@ class TalkerClient {
 
   String? _accessToken;
   WebSocketChannel? _channel;
+  StreamSubscription? _wsSubscription;
   final _eventController = StreamController<ServerEvent>.broadcast();
 
   /// Creates a new [TalkerClient].
@@ -91,7 +92,7 @@ class TalkerClient {
       // For cross-platform, one might inject the channel factory.
       _channel = IOWebSocketChannel.connect(uri);
 
-      _channel!.stream.listen(
+      _wsSubscription = _channel!.stream.listen(
         (message) {
           try {
             final json = jsonDecode(message);
@@ -105,7 +106,7 @@ class TalkerClient {
           _eventController.addError(error);
         },
         onDone: () {
-          // Connection closed
+          _eventController.addError(Exception('Connection closed'));
         },
       );
     } catch (e) {
@@ -141,8 +142,14 @@ class TalkerClient {
 
   /// Closes the WebSocket connection.
   Future<void> disconnect() async {
+    if (_wsSubscription != null) {
+      await _wsSubscription!.cancel();
+      _wsSubscription = null;
+    }
     if (_channel != null) {
-      await _channel!.sink.close();
+      try {
+        await _channel!.sink.close();
+      } catch (_) {}
       _channel = null;
     }
   }

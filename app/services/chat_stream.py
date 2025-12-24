@@ -125,7 +125,7 @@ class ChatManager:
         user_log = MessageRecord(
             session_id=session_id,
             user_id=str(user_id),
-            character_id=character_id,
+            character_id=str(character_id),
             role="user",
             content=msg.content,
             content_type=msg.content_type,
@@ -186,7 +186,7 @@ class ChatManager:
         action_log = MessageRecord(
             session_id=session_id,
             user_id=str(user_id),
-            character_id=character_id,
+            character_id=str(character_id),
             role="user",
             content=f"[ACTION] {msg.action_id} on {msg.target_id}",
             action_type=msg.action_id,
