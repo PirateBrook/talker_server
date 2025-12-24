@@ -19,7 +19,8 @@ from app.schemas.protocol import (
     AIStatusMessage, AIChunkMessage, AIEndMessage, GameEventMessage, ErrorMessage,
     ServerMessageType
 )
-from app.schemas.chat_log import ChatLog
+from app.schemas.message_record import MessageRecord
+from app.schemas.common import MessageContentType
 from app.models.character import Character
 from app.models.vector_store import CharacterMemory
 from app.models.chat_session import ChatSession
@@ -116,12 +117,14 @@ class ChatManager:
         db: AsyncSession
     ):
         # 1. Save User Message to MongoDB
-        user_log = ChatLog(
+        user_log = MessageRecord(
             session_id=session_id,
             user_id=str(user_id),
             character_id=character_id,
             role="user",
-            content=msg.content
+            content=msg.content,
+            content_type=msg.content_type,
+            metadata=msg.metadata
         )
         await self.mongo_collection.insert_one(user_log.model_dump())
 
@@ -130,6 +133,9 @@ class ChatManager:
         history_json = await self.redis.lrange(redis_key, 0, -1)
         
         # 3. Run Agent Logic
+        ai_message_id = str(uuid.uuid7())
+        stream_handler.set_message_id(ai_message_id)
+        
         ai_content = await self.agent.run(
             db,
             character_id,
@@ -140,12 +146,14 @@ class ChatManager:
         )
 
         # 6. Save AI Message to MongoDB
-        ai_log = ChatLog(
+        ai_log = MessageRecord(
+            id=ai_message_id,
             session_id=session_id,
             user_id=str(user_id),
             character_id=character_id,
             role="ai",
-            content=ai_content
+            content=ai_content,
+            content_type=MessageContentType.TEXT
         )
         await self.mongo_collection.insert_one(ai_log.model_dump())
 
@@ -170,14 +178,15 @@ class ChatManager:
         db: AsyncSession
     ):
         # 1. Log Action
-        action_log = ChatLog(
+        action_log = MessageRecord(
             session_id=session_id,
             user_id=str(user_id),
             character_id=character_id,
             role="user",
             content=f"[ACTION] {msg.action_id} on {msg.target_id}",
             action_type=msg.action_id,
-            metadata=msg.payload
+            metadata=msg.payload,
+            content_type=MessageContentType.TEXT
         )
         await self.mongo_collection.insert_one(action_log.model_dump())
 

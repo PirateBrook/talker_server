@@ -12,7 +12,7 @@ from app.services.user_service import user_service
 from app.services.chat_stream import chat_manager
 from app.services.session_service import session_service
 from app.schemas.token import TokenPayload
-from app.schemas.chat_log import ChatLog
+from app.schemas.message_record import MessageRecord
 from app.api import deps
 
 router = APIRouter()
@@ -65,7 +65,7 @@ async def websocket_endpoint(
         db=db
     )
 
-@router.get("/history", response_model=List[ChatLog])
+@router.get("/history", response_model=List[MessageRecord])
 async def get_chat_history(
     character_id: uuid.UUID,
     limit: int = 50,

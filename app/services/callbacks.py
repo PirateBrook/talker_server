@@ -10,6 +10,10 @@ class WebSocketCallbackHandler(AsyncCallbackHandler):
         self.websocket = websocket
         self.seq = 0
         self.accumulated_content = ""
+        self.message_id = None
+
+    def set_message_id(self, message_id: str):
+        self.message_id = message_id
 
     async def on_llm_start(
         self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any

@@ -61,8 +61,14 @@ void main() {
     });
 
     test('ChatMessage serialization', () {
-      final msg = ChatMessage(content: 'Hi', characterId: 1);
-      expect(msg.toJson(), {'type': 'chat', 'content': 'Hi', 'character_id': 1});
+      final msg = ChatMessage(content: 'Hi', characterId: "1");
+      expect(msg.toJson(), {
+        'type': 'chat',
+        'content': 'Hi',
+        'character_id': "1",
+        'content_type': 'text',
+        'metadata': null
+      });
     });
   });
 }

@@ -33,9 +33,9 @@
     },
     {
       "name": "build",
-      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/build-2.4.2",
+      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/build-2.5.4",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "build_config",
@@ -51,21 +51,21 @@
     },
     {
       "name": "build_resolvers",
-      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/build_resolvers-2.4.4",
+      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/build_resolvers-2.5.4",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "build_runner",
-      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/build_runner-2.4.14",
+      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/build_runner-2.5.4",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "build_runner_core",
-      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/build_runner_core-8.0.0",
+      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/build_runner_core-9.1.2",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "built_collection",
@@ -152,6 +152,18 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "freezed",
+      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/freezed-3.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "freezed_annotation",
+      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/freezed_annotation-3.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "frontend_server_client",
       "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/frontend_server_client-4.0.0",
       "packageUri": "lib/",
@@ -166,6 +178,12 @@
     {
       "name": "graphs",
       "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/graphs-2.3.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "http",
+      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/http-1.6.0",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -266,6 +284,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "protobuf",
+      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/protobuf-4.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
       "name": "pub_semver",
       "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/pub_semver-2.2.0",
       "packageUri": "lib/",
@@ -274,6 +298,18 @@
     {
       "name": "pubspec_parse",
       "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/pubspec_parse-1.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "retrofit",
+      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/retrofit-4.6.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "retrofit_generator",
+      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/retrofit_generator-9.7.0",
       "packageUri": "lib/",
       "languageVersion": "3.6"
     },
@@ -405,15 +441,15 @@
     },
     {
       "name": "web",
-      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/web-0.5.1",
+      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/web-1.1.1",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.4"
     },
     {
       "name": "web_socket_channel",
-      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/web_socket_channel-2.4.5",
+      "rootUri": "file:///Users/yiyue.wang/.pub-cache/hosted/pub.flutter-io.cn/web_socket_channel-2.4.0",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "2.15"
     },
     {
       "name": "webkit_inspection_protocol",
@@ -434,7 +470,7 @@
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2025-12-22T02:12:36.936083Z",
+  "generated": "2025-12-23T12:10:28.743299Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///Users/yiyue.wang/fvm/versions/3.29.3",

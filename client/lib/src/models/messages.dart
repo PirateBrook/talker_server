@@ -1,3 +1,5 @@
+import 'package:talker_client/src/models/message_record.dart';
+
 /// Base class for all messages
 abstract class Message {
   final String type;
@@ -10,15 +12,23 @@ abstract class Message {
 class ChatMessage extends Message {
   final String content;
   final String characterId;
+  final MessageContentType contentType;
+  final Map<String, dynamic>? metadata;
 
-  ChatMessage({required this.content, required this.characterId})
-      : super('chat');
+  ChatMessage({
+    required this.content,
+    required this.characterId,
+    this.contentType = MessageContentType.text,
+    this.metadata,
+  }) : super('chat');
 
   @override
   Map<String, dynamic> toJson() => {
         'type': type,
         'content': content,
         'character_id': characterId,
+        'content_type': contentType.name, // Enum to string
+        'metadata': metadata,
       };
 }
 

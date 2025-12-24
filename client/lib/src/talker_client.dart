@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:talker_client/src/models/messages.dart';
+import 'package:talker_client/src/models/message_record.dart';
 
 /// Exception thrown when authentication fails
 class AuthException implements Exception {
@@ -15,19 +16,19 @@ class AuthException implements Exception {
 }
 
 /// Main client for interacting with the Talker Server.
-/// 
+///
 /// Handles authentication and real-time chat/game communication.
 class TalkerClient {
   final String baseUrl;
   final String wsBaseUrl;
   final Dio _dio;
-  
+
   String? _accessToken;
   WebSocketChannel? _channel;
   final _eventController = StreamController<ServerEvent>.broadcast();
 
   /// Creates a new [TalkerClient].
-  /// 
+  ///
   /// [baseUrl]: The HTTP API base URL (e.g. 'http://localhost:8000/api/v1')
   /// [wsBaseUrl]: The WebSocket API base URL (e.g. 'ws://localhost:8000/api/v1')
   TalkerClient({
@@ -40,7 +41,7 @@ class TalkerClient {
   Stream<ServerEvent> get events => _eventController.stream;
 
   /// Authenticates with the server using email and password.
-  /// 
+  ///
   /// Returns the access token on success.
   /// Throws [AuthException] on failure.
   Future<String> login(String email, String password) async {
@@ -72,12 +73,13 @@ class TalkerClient {
   }
 
   /// Connects to the WebSocket chat endpoint.
-  /// 
+  ///
   /// [token]: Optional access token. If not provided, uses the token from [login].
   Future<void> connect({String? token}) async {
     final authToken = token ?? _accessToken;
     if (authToken == null) {
-      throw StateError('Not authenticated. Call login() first or provide a token.');
+      throw StateError(
+          'Not authenticated. Call login() first or provide a token.');
     }
 
     // Close existing connection if any
@@ -88,7 +90,7 @@ class TalkerClient {
       // In a web environment, IOWebSocketChannel isn't ideal, but for this CLI/Server client it's fine.
       // For cross-platform, one might inject the channel factory.
       _channel = IOWebSocketChannel.connect(uri);
-      
+
       _channel!.stream.listen(
         (message) {
           try {
@@ -112,14 +114,21 @@ class TalkerClient {
   }
 
   /// Sends a chat message to the server.
-  void sendChat(String content, String characterId) {
+  void sendChat(String content, String characterId,
+      {MessageContentType contentType = MessageContentType.text,
+      Map<String, dynamic>? metadata}) {
     _ensureConnected();
-    final msg = ChatMessage(content: content, characterId: characterId);
+    final msg = ChatMessage(
+        content: content,
+        characterId: characterId,
+        contentType: contentType,
+        metadata: metadata);
     _channel!.sink.add(jsonEncode(msg.toJson()));
   }
 
   /// Sends a game action to the server.
-  void sendAction(String actionId, String characterId, String targetId, [Map<String, dynamic>? payload]) {
+  void sendAction(String actionId, String characterId, String targetId,
+      [Map<String, dynamic>? payload]) {
     _ensureConnected();
     final msg = ActionMessage(
       actionId: actionId,

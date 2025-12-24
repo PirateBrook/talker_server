@@ -6,7 +6,7 @@ const String baseUrl = 'http://localhost:8000/api/v1';
 const String wsBaseUrl = 'ws://localhost:8000/api/v1';
 const String testEmail = 'test@example.com';
 const String testPassword = 'password123';
-const int testCharacterId = 1;
+const String testCharacterId = "1";
 
 void main() async {
   print('🚀 Starting Chat Simulation (Refactored Library)...');
@@ -74,13 +74,13 @@ Future<void> _simulateConversation(TalkerClient client) async {
 }
 
 Future<void> _sendChat(
-    TalkerClient client, String content, int characterId) async {
+    TalkerClient client, String content, String characterId) async {
   print('\n👤 Sending Chat: $content (to char $characterId)');
   client.sendChat(content, characterId);
 }
 
-Future<void> _sendAction(
-    TalkerClient client, String action, int characterId, String target) async {
+Future<void> _sendAction(TalkerClient client, String action, String characterId,
+    String target) async {
   print('\n👤 Sending Action: $action -> $target (to char $characterId)');
   client.sendAction(action, characterId, target);
 }

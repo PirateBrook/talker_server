@@ -4,6 +4,8 @@ from typing import Optional, Union, Dict, Any, Literal
 from pydantic import BaseModel, Field
 from datetime import datetime
 
+from app.schemas.common import MessageContentMixin, MessageContentType
+
 # --- Client Messages (Client -> Server) ---
 
 class MessageType(str, Enum):
@@ -14,10 +16,10 @@ class BaseClientMessage(BaseModel):
     type: MessageType
     timestamp: float = Field(default_factory=lambda: datetime.now().timestamp())
 
-class ChatMessage(BaseClientMessage):
+class ChatMessage(BaseClientMessage, MessageContentMixin):
     type: Literal[MessageType.CHAT] = MessageType.CHAT
     character_id: uuid.UUID
-    content: str
+    # content, content_type, metadata inherited from MessageContentMixin
 
 class ActionMessage(BaseClientMessage):
     type: Literal[MessageType.ACTION] = MessageType.ACTION
@@ -54,6 +56,7 @@ class AIChunkMessage(BaseServerMessage):
 class AIEndMessage(BaseServerMessage):
     type: Literal[ServerMessageType.AI_END] = ServerMessageType.AI_END
     full_content: Optional[str] = None
+    message_id: Optional[str] = None
 
 class GameEventMessage(BaseServerMessage):
     type: Literal[ServerMessageType.GAME_EVENT] = ServerMessageType.GAME_EVENT

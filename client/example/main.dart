@@ -7,7 +7,7 @@ const String wsBaseUrl = 'ws://localhost:8000/api/v1';
 // 模拟配置
 const String testEmail = 'test@example.com';
 const String testPassword = 'password123';
-const int testCharacterId = 1;
+const String testCharacterId = "019b44cc-bd28-70b5-81af-2fd76a9b7dd9";
 
 void main() async {
   print('🚀 开始聊天服务模拟 (Using TalkerClient Library)...');
