@@ -51,6 +51,7 @@ class Settings(BaseSettings):
     
     # OpenAI
     OPENAI_API_KEY: Optional[str] = None
+    OPENAI_API_BASE_URL: Optional[str] = None
 
     class Config:
         env_file = ".env"

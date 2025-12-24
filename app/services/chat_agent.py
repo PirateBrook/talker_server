@@ -21,12 +21,14 @@ class ChatAgent:
         # Initialize LLM (Ensure OPENAI_API_KEY is set in env or settings)
         self.llm = ChatOpenAI(
             api_key=settings.OPENAI_API_KEY,
+            base_url=settings.OPENAI_API_BASE_URL,
             streaming=True,
             temperature=0.7,
             model="gpt-4" # Configurable
         )
         self.embeddings = OpenAIEmbeddings(
             api_key=settings.OPENAI_API_KEY,
+            base_url=settings.OPENAI_API_BASE_URL,
             model="text-embedding-3-small" # Using a cheaper/newer model if available, or ada-002
         )
 
