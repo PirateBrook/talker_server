@@ -78,6 +78,9 @@ async def login_google(
 
     user = await user_service.create_google_user(db, email, google_id, name)
     
+    if not user.is_active:
+        raise HTTPException(status_code=400, detail="Inactive user")
+
     access_token_expires = timedelta(minutes=security.ACCESS_TOKEN_EXPIRE_MINUTES)
     return {
         "access_token": security.create_access_token(

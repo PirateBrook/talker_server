@@ -149,7 +149,9 @@ class TalkerClient {
     if (_channel != null) {
       try {
         await _channel!.sink.close();
-      } catch (_) {}
+      } catch (e) {
+        print('Error closing WebSocket channel: $e');
+      }
       _channel = null;
     }
   }
