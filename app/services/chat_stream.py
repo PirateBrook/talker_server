@@ -149,18 +149,24 @@ class ChatManager:
             history_json,
             stream_handler
         )
+        
+        logger.info(f"AI Content generated: {len(ai_content)} chars")
 
         # 6. Save AI Message to MongoDB
-        ai_log = MessageRecord(
-            id=ai_message_id,
-            session_id=session_id,
-            user_id=str(user_id),
-            character_id=character_id,
-            role="ai",
-            content=ai_content,
-            content_type=MessageContentType.TEXT
-        )
-        await self.mongo_collection.insert_one(ai_log.model_dump())
+        try:
+            ai_log = MessageRecord(
+                id=ai_message_id,
+                session_id=session_id,
+                user_id=str(user_id),
+                character_id=str(character_id),
+                role="ai",
+                content=ai_content,
+                content_type=MessageContentType.TEXT
+            )
+            await self.mongo_collection.insert_one(ai_log.model_dump())
+            logger.info(f"AI Message saved to DB: {ai_message_id}")
+        except Exception as e:
+            logger.error(f"Failed to save AI message: {e}", exc_info=True)
 
         # 7. Update Redis History (Window of last 20 messages)
         # Push User Msg
