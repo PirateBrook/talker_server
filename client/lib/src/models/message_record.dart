@@ -14,6 +14,36 @@ enum MessageContentType {
   video,
 }
 
+enum MessageRole {
+  user,
+  ai,
+  system,
+  unknown;
+
+  String toJson() => name;
+}
+
+class MessageRoleConverter implements JsonConverter<MessageRole, String> {
+  const MessageRoleConverter();
+
+  @override
+  MessageRole fromJson(String json) {
+    switch (json) {
+      case 'user':
+        return MessageRole.user;
+      case 'ai':
+        return MessageRole.ai;
+      case 'system':
+        return MessageRole.system;
+      default:
+        return MessageRole.unknown;
+    }
+  }
+
+  @override
+  String toJson(MessageRole object) => object.name;
+}
+
 @freezed
 abstract class MessageRecord with _$MessageRecord {
   const factory MessageRecord({
@@ -21,7 +51,7 @@ abstract class MessageRecord with _$MessageRecord {
     @JsonKey(name: 'session_id') required String sessionId,
     @JsonKey(name: 'user_id') required String userId,
     @JsonKey(name: 'character_id') required String characterId,
-    required String role, // "user" | "ai" | "system"
+    @MessageRoleConverter() required MessageRole role,
     required String content,
     @JsonKey(name: 'content_type')
     @Default(MessageContentType.text)

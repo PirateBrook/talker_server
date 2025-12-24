@@ -19,18 +19,23 @@ def test_websocket_chat_flow(sync_client: TestClient):
         return mock_user
     
     async def mock_get_db_session():
-        yield MagicMock()
+        mock_db = AsyncMock()
+        mock_db.commit = AsyncMock()
+        mock_db.refresh = AsyncMock()
+        mock_db.execute = AsyncMock(return_value=MagicMock(scalars=lambda: MagicMock(first=lambda: None, all=lambda: [])))
+        mock_db.add = MagicMock()
+        yield mock_db
 
     app.dependency_overrides[get_current_user_ws] = mock_get_current_user_ws
     app.dependency_overrides[get_db] = mock_get_db_session
     
     try:
         # Better approach: Mock the internals of ChatManager in app.services.chat_stream
-        with patch("app.services.chat_stream.chat_manager.llm") as mock_llm, \
+        with patch("app.services.chat_stream.chat_manager.agent.llm") as mock_llm, \
              patch("app.services.chat_stream.chat_manager.redis") as mock_redis, \
              patch("app.services.chat_stream.chat_manager.mongo_collection") as mock_mongo, \
-             patch.object(chat_manager, 'get_character_system_prompt', new=AsyncMock(return_value="You are a test bot.")) as mock_prompt, \
-             patch.object(chat_manager, 'get_rag_context', new=AsyncMock(return_value="")) as mock_rag:
+             patch("app.services.chat_stream.chat_manager.agent.get_character_system_prompt", new=AsyncMock(return_value="You are a test bot.")) as mock_prompt, \
+             patch("app.services.chat_stream.chat_manager.agent.get_rag_context", new=AsyncMock(return_value="")) as mock_rag:
             
             # Mock Redis Lrange
             mock_redis.lrange = AsyncMock(return_value=[])
@@ -60,9 +65,10 @@ def test_websocket_chat_flow(sync_client: TestClient):
             # Token can be dummy since we overrode the dependency
             with sync_client.websocket_connect(f"{settings.API_V1_STR}/chat/ws?token=dummy") as websocket:
                 # Send Chat Message
+                char_id = str(uuid6.uuid7())
                 websocket.send_json({
                     "type": "chat",
-                    "character_id": 1,
+                    "character_id": char_id,
                     "content": "Hi there"
                 })
                 
@@ -96,21 +102,30 @@ def test_websocket_action_flow(sync_client: TestClient):
         return mock_user
     
     async def mock_get_db_session():
-        yield MagicMock()
+        mock_db = AsyncMock()
+        mock_db.commit = AsyncMock()
+        mock_db.refresh = AsyncMock()
+        mock_db.execute = AsyncMock(return_value=MagicMock(scalars=lambda: MagicMock(first=lambda: None, all=lambda: [])))
+        mock_db.add = MagicMock()
+        yield mock_db
 
     app.dependency_overrides[get_current_user_ws] = mock_get_current_user_ws
     app.dependency_overrides[get_db] = mock_get_db_session
     
     try:
-        with patch("app.services.chat_stream.chat_manager.mongo_collection") as mock_mongo:
+        with patch("app.services.chat_stream.chat_manager.mongo_collection") as mock_mongo, \
+             patch("app.services.session_service.redis_client", new=AsyncMock()) as mock_redis:
             mock_mongo.insert_one = AsyncMock()
+            mock_redis.get = AsyncMock(return_value=None) # Simulate no session in Redis
+            mock_redis.set = AsyncMock()
             
             # 3. Connect WebSocket
             with sync_client.websocket_connect(f"{settings.API_V1_STR}/chat/ws?token=dummy") as websocket:
                 # Send Action Message
+                char_id = str(uuid6.uuid7())
                 websocket.send_json({
                     "type": "action",
-                    "character_id": 1,
+                    "character_id": char_id,
                     "action_id": "inspect",
                     "target_id": "item_123"
                 })
@@ -120,5 +135,7 @@ def test_websocket_action_flow(sync_client: TestClient):
                 assert event_msg["type"] == "game_event"
                 assert event_msg["event_type"] == "action_result"
                 assert event_msg["payload"]["action"] == "inspect"
+                assert event_msg["payload"]["target_id"] == "item_123"
+
     finally:
         app.dependency_overrides = {}

@@ -27,7 +27,8 @@ from app.models.chat_session import ChatSession
 from app.services.session_service import session_service
 from app.services.callbacks import WebSocketCallbackHandler
 from app.services.chat_agent import chat_agent
-import uuid
+import uuid6
+from pydantic import ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +41,7 @@ class ChatManager:
     async def handle_websocket(
         self, 
         websocket: WebSocket, 
-        user_id: uuid.UUID, 
+        user_id: uuid6.UUID, 
         db: AsyncSession
     ):
         await websocket.accept()
@@ -92,6 +93,10 @@ class ChatManager:
                     await websocket.send_text(
                         ErrorMessage(code="JSON_ERROR", message="Invalid JSON").model_dump_json()
                     )
+                except ValidationError as e:
+                    await websocket.send_text(
+                        ErrorMessage(code="VALIDATION_ERROR", message=str(e)).model_dump_json()
+                    )
                 except Exception as e:
                     logger.error(f"Error processing message: {e}", exc_info=True)
                     await websocket.send_text(
@@ -111,8 +116,8 @@ class ChatManager:
         msg: ChatMessage, 
         websocket: WebSocket, 
         session_id: str, 
-        user_id: uuid.UUID, 
-        character_id: uuid.UUID,
+        user_id: uuid6.UUID, 
+        character_id: uuid6.UUID,
         stream_handler: WebSocketCallbackHandler,
         db: AsyncSession
     ):
@@ -133,7 +138,7 @@ class ChatManager:
         history_json = await self.redis.lrange(redis_key, 0, -1)
         
         # 3. Run Agent Logic
-        ai_message_id = str(uuid.uuid7())
+        ai_message_id = str(uuid6.uuid7())
         stream_handler.set_message_id(ai_message_id)
         
         ai_content = await self.agent.run(
@@ -173,8 +178,8 @@ class ChatManager:
         msg: ActionMessage, 
         websocket: WebSocket, 
         session_id: str, 
-        user_id: uuid.UUID, 
-        character_id: uuid.UUID,
+        user_id: uuid6.UUID, 
+        character_id: uuid6.UUID,
         db: AsyncSession
     ):
         # 1. Log Action
@@ -192,16 +197,14 @@ class ChatManager:
 
         # 2. Handle Game Logic
         # Placeholder: Check if action is valid, roll dice, etc.
-        # For now, simple echo/success
-        
-        response_payload = {"status": "success", "action": msg.action_id}
-        
-        if msg.action_id == "inspect":
-            response_payload["description"] = f"You inspect the {msg.target_id}. It looks interesting."
-        elif msg.action_id == "touch":
-             response_payload["description"] = f"You touch the {msg.target_id}. Nothing happens."
         
         # 3. Send Feedback
+        response_payload = {
+            "status": "success", 
+            "action": msg.action_id,
+            "target_id": msg.target_id
+        }
+        
         await websocket.send_text(
             GameEventMessage(
                 event_type="action_result",

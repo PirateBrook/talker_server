@@ -20,7 +20,8 @@ class ChatMessage extends Message {
     required this.characterId,
     this.contentType = MessageContentType.text,
     this.metadata,
-  }) : super('chat');
+  })  : assert(characterId.isNotEmpty, 'characterId cannot be empty'),
+        super('chat');
 
   @override
   Map<String, dynamic> toJson() => {
@@ -44,7 +45,8 @@ class ActionMessage extends Message {
     required this.characterId,
     this.targetId,
     this.payload,
-  }) : super('action');
+  })  : assert(characterId.isNotEmpty, 'characterId cannot be empty'),
+        super('action');
 
   @override
   Map<String, dynamic> toJson() => {

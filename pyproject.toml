@@ -26,6 +26,7 @@ dependencies = [
     "redis>=7.1.0",
     "sqlalchemy>=2.0.45",
     "uvicorn[standard]>=0.38.0",
+    "uuid6>=2024.7.10",
 ]
 
 [dependency-groups]

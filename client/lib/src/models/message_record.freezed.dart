@@ -21,7 +21,8 @@ mixin _$MessageRecord {
   String get userId;
   @JsonKey(name: 'character_id')
   String get characterId;
-  String get role; // "user" | "ai" | "system"
+  @MessageRoleConverter()
+  MessageRole get role;
   String get content;
   @JsonKey(name: 'content_type')
   MessageContentType get contentType;
@@ -96,7 +97,7 @@ abstract mixin class $MessageRecordCopyWith<$Res> {
       @JsonKey(name: 'session_id') String sessionId,
       @JsonKey(name: 'user_id') String userId,
       @JsonKey(name: 'character_id') String characterId,
-      String role,
+      @MessageRoleConverter() MessageRole role,
       String content,
       @JsonKey(name: 'content_type') MessageContentType contentType,
       @JsonKey(name: 'action_type') String? actionType,
@@ -148,7 +149,7 @@ class _$MessageRecordCopyWithImpl<$Res>
       role: null == role
           ? _self.role
           : role // ignore: cast_nullable_to_non_nullable
-              as String,
+              as MessageRole,
       content: null == content
           ? _self.content
           : content // ignore: cast_nullable_to_non_nullable
@@ -271,7 +272,7 @@ extension MessageRecordPatterns on MessageRecord {
             @JsonKey(name: 'session_id') String sessionId,
             @JsonKey(name: 'user_id') String userId,
             @JsonKey(name: 'character_id') String characterId,
-            String role,
+            @MessageRoleConverter() MessageRole role,
             String content,
             @JsonKey(name: 'content_type') MessageContentType contentType,
             @JsonKey(name: 'action_type') String? actionType,
@@ -319,7 +320,7 @@ extension MessageRecordPatterns on MessageRecord {
             @JsonKey(name: 'session_id') String sessionId,
             @JsonKey(name: 'user_id') String userId,
             @JsonKey(name: 'character_id') String characterId,
-            String role,
+            @MessageRoleConverter() MessageRole role,
             String content,
             @JsonKey(name: 'content_type') MessageContentType contentType,
             @JsonKey(name: 'action_type') String? actionType,
@@ -365,7 +366,7 @@ extension MessageRecordPatterns on MessageRecord {
             @JsonKey(name: 'session_id') String sessionId,
             @JsonKey(name: 'user_id') String userId,
             @JsonKey(name: 'character_id') String characterId,
-            String role,
+            @MessageRoleConverter() MessageRole role,
             String content,
             @JsonKey(name: 'content_type') MessageContentType contentType,
             @JsonKey(name: 'action_type') String? actionType,
@@ -401,7 +402,7 @@ class _MessageRecord implements MessageRecord {
       @JsonKey(name: 'session_id') required this.sessionId,
       @JsonKey(name: 'user_id') required this.userId,
       @JsonKey(name: 'character_id') required this.characterId,
-      required this.role,
+      @MessageRoleConverter() required this.role,
       required this.content,
       @JsonKey(name: 'content_type') this.contentType = MessageContentType.text,
       @JsonKey(name: 'action_type') this.actionType,
@@ -423,8 +424,8 @@ class _MessageRecord implements MessageRecord {
   @JsonKey(name: 'character_id')
   final String characterId;
   @override
-  final String role;
-// "user" | "ai" | "system"
+  @MessageRoleConverter()
+  final MessageRole role;
   @override
   final String content;
   @override
@@ -517,7 +518,7 @@ abstract mixin class _$MessageRecordCopyWith<$Res>
       @JsonKey(name: 'session_id') String sessionId,
       @JsonKey(name: 'user_id') String userId,
       @JsonKey(name: 'character_id') String characterId,
-      String role,
+      @MessageRoleConverter() MessageRole role,
       String content,
       @JsonKey(name: 'content_type') MessageContentType contentType,
       @JsonKey(name: 'action_type') String? actionType,
@@ -569,7 +570,7 @@ class __$MessageRecordCopyWithImpl<$Res>
       role: null == role
           ? _self.role
           : role // ignore: cast_nullable_to_non_nullable
-              as String,
+              as MessageRole,
       content: null == content
           ? _self.content
           : content // ignore: cast_nullable_to_non_nullable
