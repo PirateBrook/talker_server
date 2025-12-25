@@ -53,6 +53,17 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: Optional[str] = None
     OPENAI_API_BASE_URL: Optional[str] = None
 
+    # pgAdmin
+    PGADMIN_DEFAULT_EMAIL: str = "punkscosmos@gmail.com"
+    PGADMIN_DEFAULT_PASSWORD: str = "TalkerAdmin_2025"
+    PGADMIN_PORT: int = 5050
+
+    # Mongo Express
+    MONGO_EXPRESS_PORT: int = 8081
+    ME_CONFIG_MONGODB_SERVER: str = "mongo"
+    ME_CONFIG_MONGODB_PORT: int = 27017
+    ME_CONFIG_BASICAUTH: bool = False
+
     class Config:
         env_file = ".env"
         case_sensitive = True
