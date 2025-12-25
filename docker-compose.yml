@@ -35,10 +35,10 @@ services:
       - REDIS_HOST=redis
 
   db:
-    image: pgvector/pgvector:0.8.1-pg18-trixie
+    image: pgvector/pgvector:pg16
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: test1234
+      POSTGRES_PASSWORD: T@lkerS3rv3r!2025
       POSTGRES_DB: talker
     ports:
       - "5432:5432"
