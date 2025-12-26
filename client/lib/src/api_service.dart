@@ -4,6 +4,7 @@ import 'package:talker_client/src/models/character.dart';
 import 'package:talker_client/src/models/message_record.dart';
 import 'package:talker_client/src/models/token.dart';
 import 'package:talker_client/src/models/user.dart';
+import 'package:talker_client/src/models/social.dart';
 
 part 'api_service.g.dart';
 
@@ -48,4 +49,25 @@ abstract class ApiService {
     @Query("character_id") required String characterId,
     @Query("limit") int limit = 50,
   });
+
+  // --- Social Features ---
+  @GET("/social/friends")
+  Future<List<FriendItem>> getFriends({
+    @Query("skip") int skip = 0,
+    @Query("limit") int limit = 20,
+    @Query("search") String? search,
+    @Query("sort_by") String sortBy = 'recent',
+  });
+
+  @GET("/social/sessions")
+  Future<List<MessageSessionItem>> getSessions({
+    @Query("skip") int skip = 0,
+    @Query("limit") int limit = 20,
+  });
+
+  @POST("/social/sessions/{session_id}/pin")
+  Future<void> pinSession(
+    @Path("session_id") String sessionId,
+    @Body() Map<String, bool> body,
+  );
 }

@@ -27,4 +27,6 @@ abstract class UserRegister with _$UserRegister {
 
   factory UserRegister.fromJson(Map<String, dynamic> json) =>
       _$UserRegisterFromJson(json);
+
+  toJson() => toJson();
 }

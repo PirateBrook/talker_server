@@ -1,11 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:talker_client/src/models/messages.dart';
-import 'package:talker_client/src/models/message_record.dart';
-import 'package:talker_client/src/models/social.dart';
+
+import '../talker_client.dart';
 
 /// Exception thrown when authentication fails
 class AuthException implements Exception {
@@ -24,10 +20,10 @@ class TalkerClient {
   final String wsBaseUrl;
   final Dio _dio;
 
+  late final ApiService _apiService;
+  late final RealtimeService _realtimeService;
+
   String? _accessToken;
-  WebSocketChannel? _channel;
-  StreamSubscription? _wsSubscription;
-  final _eventController = StreamController<ServerEvent>.broadcast();
 
   /// Creates a new [TalkerClient].
   ///
@@ -37,10 +33,19 @@ class TalkerClient {
     required this.baseUrl,
     required this.wsBaseUrl,
     Dio? dio,
-  }) : _dio = dio ?? Dio();
+  }) : _dio = dio ?? Dio() {
+    _apiService = ApiService(_dio, baseUrl: baseUrl);
+    _realtimeService = RealtimeService(wsBaseUrl: wsBaseUrl);
+  }
+
+  /// Expose the underlying API service for direct access if needed.
+  ApiService get api => _apiService;
+
+  /// Expose the underlying realtime service for direct access if needed.
+  RealtimeService get realtime => _realtimeService;
 
   /// Stream of events received from the server.
-  Stream<ServerEvent> get events => _eventController.stream;
+  Stream<ServerEvent> get events => _realtimeService.events;
 
   /// Authenticates with the server using email and password.
   ///
@@ -48,27 +53,13 @@ class TalkerClient {
   /// Throws [AuthException] on failure.
   Future<String> login(String email, String password) async {
     try {
-      final response = await _dio.post(
-        '$baseUrl/auth/login/access-token',
-        data: FormData.fromMap({
-          'username': email,
-          'password': password,
-        }),
-        options: Options(
-          contentType: Headers.formUrlEncodedContentType,
-          validateStatus: (status) => status! < 500,
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        _accessToken = response.data['access_token'];
-        return _accessToken!;
-      } else {
-        throw AuthException(
-          response.data['detail'] ?? 'Login failed',
-          response.statusCode,
-        );
-      }
+      final token = await _apiService.loginAccessToken(email, password);
+      _accessToken = token.accessToken;
+      // Setup interceptor for subsequent requests
+      _dio.options.headers['Authorization'] = 'Bearer $_accessToken';
+      // Update realtime service token
+      _realtimeService.setToken(_accessToken!);
+      return _accessToken!;
     } on DioException catch (e) {
       throw AuthException(e.message ?? 'Network error', e.response?.statusCode);
     }
@@ -77,167 +68,36 @@ class TalkerClient {
   /// Connects to the WebSocket chat endpoint.
   ///
   /// [token]: Optional access token. If not provided, uses the token from [login].
-  Future<void> connect({String? token}) async {
-    final authToken = token ?? _accessToken;
-    if (authToken == null) {
-      throw StateError(
-          'Not authenticated. Call login() first or provide a token.');
-    }
-
-    // Close existing connection if any
-    await disconnect();
-
-    final uri = Uri.parse('$wsBaseUrl/chat/ws?token=$authToken');
-    try {
-      // In a web environment, IOWebSocketChannel isn't ideal, but for this CLI/Server client it's fine.
-      // For cross-platform, one might inject the channel factory.
-      _channel = IOWebSocketChannel.connect(uri);
-
-      _wsSubscription = _channel!.stream.listen(
-        (message) {
-          try {
-            final json = jsonDecode(message);
-            final event = ServerEvent.fromJson(json);
-            _eventController.add(event);
-          } catch (e, st) {
-            _eventController.addError(e, st);
-          }
-        },
-        onError: (error) {
-          _eventController.addError(error);
-        },
-        onDone: () {
-          _eventController.addError(Exception('Connection closed'));
-        },
-      );
-    } catch (e) {
-      rethrow;
-    }
+  Future<void> connect({String? token}) {
+    return _realtimeService.connect(token: token);
   }
 
   /// Sends a chat message to the server.
   void sendChat(String content, String characterId,
       {MessageContentType contentType = MessageContentType.text,
       Map<String, dynamic>? metadata}) {
-    _ensureConnected();
-    final msg = ChatMessage(
-        content: content,
-        characterId: characterId,
-        contentType: contentType,
-        metadata: metadata);
-    _channel!.sink.add(jsonEncode(msg.toJson()));
+    _realtimeService.sendChat(content, characterId,
+        contentType: contentType, metadata: metadata);
   }
 
   /// Sends a game action to the server.
   void sendAction(String actionId, String characterId, String targetId,
       [Map<String, dynamic>? payload]) {
-    _ensureConnected();
-    final msg = ActionMessage(
-      actionId: actionId,
-      characterId: characterId,
-      targetId: targetId,
-      payload: payload ?? {'timestamp': DateTime.now().toIso8601String()},
-    );
-    _channel!.sink.add(jsonEncode(msg.toJson()));
+    _realtimeService.sendAction(actionId, characterId, targetId, payload);
   }
 
   /// Closes the WebSocket connection.
-  Future<void> disconnect() async {
-    if (_wsSubscription != null) {
-      await _wsSubscription!.cancel();
-      _wsSubscription = null;
-    }
-    if (_channel != null) {
-      try {
-        await _channel!.sink.close();
-      } catch (e) {
-        print('Error closing WebSocket channel: $e');
-      }
-      _channel = null;
-    }
+  Future<void> disconnect() {
+    return _realtimeService.disconnect();
   }
 
   /// Disposes the client and its streams.
   Future<void> dispose() async {
-    await disconnect();
-    await _eventController.close();
-  }
-
-  void _ensureConnected() {
-    if (_channel == null) {
-      throw StateError('WebSocket not connected. Call connect() first.');
-    }
-  }
-
-  // --- Social Features ---
-
-  /// Get friend list (followed characters).
-  ///
-  /// [skip]: Number of records to skip (for pagination).
-  /// [limit]: Maximum number of records to return.
-  /// [search]: Search query for character name.
-  /// [sortBy]: Sort order ('recent' or 'name').
-  Future<List<FriendItem>> getFriends({
-    int skip = 0,
-    int limit = 20,
-    String? search,
-    String sortBy = 'recent',
-  }) async {
-    final response = await _dio.get(
-      '$baseUrl/social/friends',
-      queryParameters: {
-        'skip': skip,
-        'limit': limit,
-        if (search != null) 'search': search,
-        'sort_by': sortBy,
-      },
-      options: Options(
-        headers: _authHeaders,
-      ),
-    );
-
-    return (response.data as List).map((e) => FriendItem.fromJson(e)).toList();
-  }
-
-  /// Get active message sessions.
-  ///
-  /// [skip]: Number of records to skip.
-  /// [limit]: Maximum number of records to return.
-  Future<List<MessageSessionItem>> getSessions({
-    int skip = 0,
-    int limit = 20,
-  }) async {
-    final response = await _dio.get(
-      '$baseUrl/social/sessions',
-      queryParameters: {
-        'skip': skip,
-        'limit': limit,
-      },
-      options: Options(
-        headers: _authHeaders,
-      ),
-    );
-
-    return (response.data as List)
-        .map((e) => MessageSessionItem.fromJson(e))
-        .toList();
+    await _realtimeService.dispose();
   }
 
   /// Pin or unpin a session.
-  Future<void> pinSession(String sessionId, bool isPinned) async {
-    await _dio.post(
-      '$baseUrl/social/sessions/$sessionId/pin',
-      data: {'is_pinned': isPinned},
-      options: Options(
-        headers: _authHeaders,
-      ),
-    );
-  }
-
-  Map<String, dynamic> get _authHeaders {
-    if (_accessToken == null) {
-      throw StateError('Not authenticated');
-    }
-    return {'Authorization': 'Bearer $_accessToken'};
+  Future<void> pinSession(String sessionId, bool isPinned) {
+    return _apiService.pinSession(sessionId, {'is_pinned': isPinned});
   }
 }
