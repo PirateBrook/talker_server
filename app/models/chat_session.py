@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, ForeignKey, Integer, Enum
+from sqlalchemy import Column, String, DateTime, ForeignKey, Integer, Enum, Boolean
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -20,6 +20,11 @@ class ChatSession(Base):
     
     title = Column(String, nullable=True)
     status = Column(String, default=SessionStatus.ACTIVE.value, nullable=False)
+    
+    # Social features
+    is_pinned = Column(Boolean, default=False)
+    last_message_preview = Column(String, nullable=True)
+    unread_count = Column(Integer, default=0)
     
     # Statistics
     msg_count = Column(Integer, default=0)

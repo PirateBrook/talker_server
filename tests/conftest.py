@@ -10,10 +10,15 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+import uuid
 
 from app.main import app
 from app.core.config import settings
 from app.core.database import Base, get_db
+from app.core.security import create_access_token, get_password_hash
+from app.models.user import User
+from app.models.character import Character
+from app.schemas.character import CharacterCreate
 
 # Calculate SQLALCHEMY_DATABASE_URL
 SQLALCHEMY_DATABASE_URL = settings.SQLALCHEMY_DATABASE_URI
@@ -35,8 +40,9 @@ async def db_engine():
     async with engine.begin() as conn:
         await conn.execute(sqlalchemy.text("CREATE EXTENSION IF NOT EXISTS vector"))
 
-    # Create tables
+    # Create tables (drop first to ensure clean state)
     async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
         
     yield engine
@@ -94,3 +100,35 @@ def sync_client(db):
     
     # Restore lifespan
     app.router.lifespan_context = original_lifespan
+
+# --- Helpers ---
+
+async def create_test_character(db: AsyncSession) -> Character:
+    char_in = Character(
+        name="Test Char",
+        description="A test character",
+        is_active=True
+    )
+    db.add(char_in)
+    await db.commit()
+    await db.refresh(char_in)
+    return char_in
+
+@pytest.fixture(scope="function")
+async def normal_user_token_headers(db: AsyncSession) -> dict:
+    email = f"test_{uuid.uuid4()}@example.com"
+    password = "testpassword"
+    user = User(
+        email=email,
+        hashed_password=get_password_hash(password),
+        is_active=True,
+        is_superuser=False,
+    )
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    
+    access_token = create_access_token(
+        data={"sub": str(user.id)}
+    )
+    return {"Authorization": f"Bearer {access_token}"}

@@ -6,7 +6,7 @@ from fastapi import HTTPException
 import uuid
 
 class StatsService:
-    async def get_stats(self, db: AsyncSession, character_id: int) -> CharacterStats:
+    async def get_stats(self, db: AsyncSession, character_id: uuid.UUID) -> CharacterStats:
         result = await db.execute(select(CharacterStats).filter(CharacterStats.character_id == character_id))
         stats = result.scalars().first()
         if not stats:
@@ -22,7 +22,7 @@ class StatsService:
             await db.refresh(stats)
         return stats
 
-    async def record_chat(self, db: AsyncSession, character_id: int, user_id: str):
+    async def record_chat(self, db: AsyncSession, character_id: uuid.UUID, user_id: uuid.UUID):
         stats = await self.get_stats(db, character_id)
         
         # 1. Update turn count
@@ -50,7 +50,7 @@ class StatsService:
         await db.refresh(stats)
         return stats
 
-    async def rate_character(self, db: AsyncSession, character_id: int, user_id: str, rating: int):
+    async def rate_character(self, db: AsyncSession, character_id: uuid.UUID, user_id: uuid.UUID, rating: int):
         stats = await self.get_stats(db, character_id)
         
         # Check existing rating
@@ -85,7 +85,7 @@ class StatsService:
         await db.refresh(stats)
         return stats
 
-    async def follow_character(self, db: AsyncSession, character_id: int, user_id: str) -> bool:
+    async def follow_character(self, db: AsyncSession, character_id: uuid.UUID, user_id: uuid.UUID) -> bool:
         """Returns True if followed, False if already following (idempotent-ish)"""
         stats = await self.get_stats(db, character_id)
         
@@ -131,7 +131,7 @@ class StatsService:
         await db.commit()
         return True
 
-    async def is_following(self, db: AsyncSession, character_id: int, user_id: str) -> bool:
+    async def is_following(self, db: AsyncSession, character_id: uuid.UUID, user_id: uuid.UUID) -> bool:
         result = await db.execute(
             select(CharacterFollow).filter(
                 CharacterFollow.character_id == character_id,

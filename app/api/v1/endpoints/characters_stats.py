@@ -41,7 +41,7 @@ async def rate_character(
 async def follow_character(
     *,
     db: AsyncSession = Depends(get_db),
-    character_id: int,
+    character_id: uuid.UUID,
     current_user: User = Depends(get_current_user),
 ) -> Any:
     """
@@ -78,7 +78,7 @@ async def unfollow_character(
 async def record_chat_interaction(
     *,
     db: AsyncSession = Depends(get_db),
-    character_id: int,
+    character_id: uuid.UUID,
     current_user: User = Depends(get_current_user),
 ) -> Any:
     """

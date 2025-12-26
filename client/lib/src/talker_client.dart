@@ -5,6 +5,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:talker_client/src/models/messages.dart';
 import 'package:talker_client/src/models/message_record.dart';
+import 'package:talker_client/src/models/social.dart';
 
 /// Exception thrown when authentication fails
 class AuthException implements Exception {
@@ -166,5 +167,77 @@ class TalkerClient {
     if (_channel == null) {
       throw StateError('WebSocket not connected. Call connect() first.');
     }
+  }
+
+  // --- Social Features ---
+
+  /// Get friend list (followed characters).
+  ///
+  /// [skip]: Number of records to skip (for pagination).
+  /// [limit]: Maximum number of records to return.
+  /// [search]: Search query for character name.
+  /// [sortBy]: Sort order ('recent' or 'name').
+  Future<List<FriendItem>> getFriends({
+    int skip = 0,
+    int limit = 20,
+    String? search,
+    String sortBy = 'recent',
+  }) async {
+    final response = await _dio.get(
+      '$baseUrl/social/friends',
+      queryParameters: {
+        'skip': skip,
+        'limit': limit,
+        if (search != null) 'search': search,
+        'sort_by': sortBy,
+      },
+      options: Options(
+        headers: _authHeaders,
+      ),
+    );
+
+    return (response.data as List).map((e) => FriendItem.fromJson(e)).toList();
+  }
+
+  /// Get active message sessions.
+  ///
+  /// [skip]: Number of records to skip.
+  /// [limit]: Maximum number of records to return.
+  Future<List<MessageSessionItem>> getSessions({
+    int skip = 0,
+    int limit = 20,
+  }) async {
+    final response = await _dio.get(
+      '$baseUrl/social/sessions',
+      queryParameters: {
+        'skip': skip,
+        'limit': limit,
+      },
+      options: Options(
+        headers: _authHeaders,
+      ),
+    );
+
+    return (response.data as List)
+        .map((e) => MessageSessionItem.fromJson(e))
+        .toList();
+  }
+
+  /// Pin or unpin a session.
+  Future<void> pinSession(String sessionId, bool isPinned) async {
+    await _dio.post(
+      '$baseUrl/social/sessions/$sessionId/pin',
+      data: {'is_pinned': isPinned},
+      options: Options(
+        headers: _authHeaders,
+      ),
+    );
+  }
+
+  Map<String, dynamic> get _authHeaders {
+    if (_accessToken == null) {
+      throw StateError('Not authenticated');
+    }
+    return {'Authorization': 'Bearer $_accessToken'};
   }
 }
