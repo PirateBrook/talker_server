@@ -65,12 +65,12 @@ async def websocket_endpoint(
         db=db
     )
 
-@router.get("/history", response_model=List[MessageRecord])
+@router.get("/history", response_model=List[MessageRecord], status_code=200)
 async def get_chat_history(
     character_id: uuid.UUID,
     limit: int = 50,
     db: AsyncSession = Depends(get_db),
-    current_user = Depends(deps.get_current_user)
+    current_user: Any = Depends(deps.get_current_user)
 ) -> Any:
     """
     Get chat history for the current active session (Implicit Session).

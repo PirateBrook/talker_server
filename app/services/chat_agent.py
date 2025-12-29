@@ -24,7 +24,7 @@ class ChatAgent:
             base_url=settings.OPENAI_API_BASE_URL,
             streaming=True,
             temperature=0.7,
-            model="gpt-4" # Configurable
+            model="deepseek/deepseek-r1-0528:free" # Configurable
         )
         self.embeddings = OpenAIEmbeddings(
             api_key=settings.OPENAI_API_KEY,
