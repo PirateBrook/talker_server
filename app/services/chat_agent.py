@@ -19,16 +19,19 @@ logger = logging.getLogger(__name__)
 class ChatAgent:
     def __init__(self):
         # Initialize LLM (Ensure OPENAI_API_KEY is set in env or settings)
+        if not settings.OPENAI_API_KEY:
+            logger.warning("OPENAI_API_KEY is not set in settings. Chat functionality may fail.")
+
         self.llm = ChatOpenAI(
-            api_key=settings.OPENAI_API_KEY,
-            base_url=settings.OPENAI_API_BASE_URL,
+            openai_api_key=settings.OPENAI_API_KEY,
+            openai_api_base=settings.OPENAI_API_BASE_URL,
             streaming=True,
             temperature=0.7,
             model="deepseek/deepseek-r1-0528:free" # Configurable
         )
         self.embeddings = OpenAIEmbeddings(
-            api_key=settings.OPENAI_API_KEY,
-            base_url=settings.OPENAI_API_BASE_URL,
+            openai_api_key=settings.OPENAI_API_KEY,
+            openai_api_base=settings.OPENAI_API_BASE_URL,
             model="text-embedding-3-small" # Using a cheaper/newer model if available, or ada-002
         )
 
