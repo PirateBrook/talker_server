@@ -1,10 +1,12 @@
 from datetime import timedelta
-from typing import Any
+from typing import Any, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
-from google.oauth2 import id_token
+from google.oauth2 import id_token as google_id_token
 from google.auth.transport import requests
+from pydantic import BaseModel
+import logging
 
 from app.api import deps
 from app.core import security
@@ -12,6 +14,8 @@ from app.core.config import settings
 from app.schemas.token import Token
 from app.schemas.user import UserCreate, UserRegister, User
 from app.services.user_service import user_service
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -54,20 +58,32 @@ async def login_anonymous(
         "token_type": "bearer",
     }
 
+
+class GoogleLoginRequest(BaseModel):
+    id_token: str
+    access_token: Optional[str] = None
+
 @router.post("/login/google", response_model=Token)
 async def login_google(
-    token: str = Body(..., embed=True),
+    request_body: GoogleLoginRequest,
     db: AsyncSession = Depends(deps.get_db),
 ) -> Any:
     """
     Login with Google ID Token
     """
     try:
-        id_info = id_token.verify_oauth2_token(
-            token, requests.Request(), settings.GOOGLE_CLIENT_ID
+        # Verify the token
+        # If settings.GOOGLE_CLIENT_ID is None, verify_oauth2_token will not check audience
+        # which might not be what we want, but it shouldn't cause ValueError unless token is bad.
+        id_info = google_id_token.verify_oauth2_token(
+            request_body.id_token, requests.Request(), settings.GOOGLE_CLIENT_ID
         )
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid Google token")
+    except ValueError as e:
+        logger.error(f"Google Token Verification Failed: {str(e)}")
+        # Be careful logging full tokens in production, but helpful for debug
+        logger.debug(f"Provided Token: {request_body.id_token}") 
+        logger.error(f"Expected Client ID: {settings.GOOGLE_CLIENT_ID}")
+        raise HTTPException(status_code=400, detail=f"Invalid Google token: {str(e)}")
 
     email = id_info.get("email")
     google_id = id_info.get("sub")
