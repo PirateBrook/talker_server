@@ -5,6 +5,8 @@ import 'package:talker_client/src/models/message_record.dart';
 import 'package:talker_client/src/models/token.dart';
 import 'package:talker_client/src/models/user.dart';
 import 'package:talker_client/src/models/social.dart';
+import 'package:talker_client/src/models/stats.dart';
+import 'package:talker_client/src/models/session.dart';
 
 part 'api_service.g.dart';
 
@@ -42,6 +44,45 @@ abstract class ApiService {
 
   @GET("/characters/{character_id}")
   Future<Character> readCharacter(@Path("character_id") String characterId);
+
+  @PATCH("/characters/{character_id}")
+  Future<Character> updateCharacter(
+    @Path("character_id") String characterId,
+    @Body() Character characterIn,
+  );
+
+  @DELETE("/characters/{character_id}")
+  Future<Character> deleteCharacter(@Path("character_id") String characterId);
+
+  // --- Character Stats ---
+  @GET("/characters/{character_id}/stats")
+  Future<CharacterStats> getCharacterStats(
+      @Path("character_id") String characterId);
+
+  @POST("/characters/{character_id}/rate")
+  Future<CharacterStats> rateCharacter(
+    @Path("character_id") String characterId,
+    @Body() RateCharacterRequest ratingIn,
+  );
+
+  @POST("/characters/{character_id}/follow")
+  Future<FollowCharacterResponse> followCharacter(
+      @Path("character_id") String characterId);
+
+  @DELETE("/characters/{character_id}/follow")
+  Future<FollowCharacterResponse> unfollowCharacter(
+      @Path("character_id") String characterId);
+
+  // --- Sessions ---
+  @GET("/sessions/active_session")
+  Future<SessionResponse> getActiveSession({
+    @Query("character_id") required String characterId,
+  });
+
+  @POST("/sessions/reset")
+  Future<SessionResponse> resetSession({
+    @Query("character_id") required String characterId,
+  });
 
   // --- Chat ---
   @GET("/chat/history")

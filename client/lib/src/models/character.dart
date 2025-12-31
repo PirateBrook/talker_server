@@ -44,4 +44,6 @@ abstract class Character with _$Character {
   }) = _Character;
 
   factory Character.fromJson(Map<String, dynamic> json) => _$CharacterFromJson(json);
+
+  Map<String, dynamic> toJson() => toJson();
 }
