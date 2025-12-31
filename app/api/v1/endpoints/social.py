@@ -6,10 +6,42 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.api import deps
 from app.models.user import User
-from app.schemas.social import FriendItem, MessageSessionItem, PinSessionRequest
+from app.schemas.social import FriendItem, MessageSessionItem, PinSessionRequest, FriendRequestItem, FriendRequestAction
 from app.services.social_service import social_service
+from app.services.recommendation_service import recommendation_service
+from app.models.social_request import FriendRequest
 
 router = APIRouter()
+
+@router.get("/friend-requests", response_model=List[FriendRequestItem])
+async def get_friend_requests(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(deps.get_current_user),
+) -> Any:
+    """
+    Get pending friend requests.
+    """
+    return await recommendation_service.get_pending_requests(db, current_user.id)
+
+@router.post("/friend-requests/{request_id}/action", response_model=FriendRequestItem)
+async def handle_friend_request(
+    request_id: int,
+    body: FriendRequestAction,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(deps.get_current_user),
+) -> Any:
+    """
+    Accept, Reject or Ignore a friend request.
+    """
+    req = await recommendation_service.handle_request_action(
+        db, 
+        current_user.id, 
+        request_id, 
+        body.action
+    )
+    if not req:
+        raise HTTPException(status_code=404, detail="Request not found")
+    return req
 
 @router.get("/friends", response_model=List[FriendItem])
 async def get_friends(

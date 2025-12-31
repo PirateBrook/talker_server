@@ -111,4 +111,13 @@ abstract class ApiService {
     @Path("session_id") String sessionId,
     @Body() Map<String, bool> body,
   );
+
+  @GET("/social/friend-requests")
+  Future<List<FriendRequestItem>> getFriendRequests();
+
+  @POST("/social/friend-requests/{request_id}/action")
+  Future<FriendRequestItem> handleFriendRequest(
+    @Path("request_id") int requestId,
+    @Body() FriendRequestAction body,
+  );
 }

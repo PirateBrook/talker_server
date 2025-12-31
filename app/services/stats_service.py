@@ -5,6 +5,9 @@ from app.models.character import Character
 from fastapi import HTTPException
 import uuid
 
+from app.services.recommendation_service import recommendation_service
+from app.schemas.recommendation import RecommendationEventType
+
 class StatsService:
     async def get_stats(self, db: AsyncSession, character_id: uuid.UUID) -> CharacterStats:
         result = await db.execute(select(CharacterStats).filter(CharacterStats.character_id == character_id))
@@ -48,6 +51,14 @@ class StatsService:
         db.add(stats)
         await db.commit()
         await db.refresh(stats)
+
+        # Trigger Recommendation Rule: Chat Milestone
+        # We assume 10 turns is a milestone for now. In real app, check cumulative per user.
+        # But here we just trigger it. The service will decide logic.
+        await recommendation_service.trigger_rules(
+            db, user_id, RecommendationEventType.CHAT_MILESTONE, {"character_id": character_id}
+        )
+
         return stats
 
     async def rate_character(self, db: AsyncSession, character_id: uuid.UUID, user_id: uuid.UUID, rating: int):
@@ -107,6 +118,12 @@ class StatsService:
         db.add(stats)
         
         await db.commit()
+        
+        # Trigger Recommendation Rule: Churn Recovery
+        await recommendation_service.trigger_rules(
+            db, uuid.UUID(user_id), RecommendationEventType.UNFOLLOW, {"character_id": character_id}
+        )
+        
         return True
 
     async def unfollow_character(self, db: AsyncSession, character_id: int, user_id: str) -> bool:

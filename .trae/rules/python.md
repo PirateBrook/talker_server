@@ -57,3 +57,4 @@ Talker Server is a modern, full-stack AI chat application backend built with Fas
 - **Router Conflicts**: Ensure `prefix` in `include_router` does not conflict (e.g., separating `/chat` and `/sessions`).
 - **Trailing Slashes**: Be mindful of trailing slashes in API definitions vs client requests.
 - **Async Context**: Don't block the event loop; run CPU-bound tasks in thread pools if necessary.
+- **Hardcoded Strings**: Avoid using hardcoded strings for event types, status codes, or other enumerable values. Define and use Python `Enum` classes instead (e.g., `RecommendationEventType`).

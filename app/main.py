@@ -9,7 +9,7 @@ from app.core.middlewares import GZipRequestMiddleware, LoggingMiddleware
 import logging
 
 # Import models to ensure they are registered with Base
-from app.models import user, vector_store, character, interaction
+from app.models import user, vector_store, character, interaction, social_request
 
 logger = logging.getLogger(__name__)
 

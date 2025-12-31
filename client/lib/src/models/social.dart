@@ -1,49 +1,55 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:talker_client/src/models/character.dart';
 
-class FriendItem {
-  final Character character;
-  final DateTime? lastInteractionAt;
+part 'social.freezed.dart';
+part 'social.g.dart';
 
-  FriendItem({
-    required this.character,
-    this.lastInteractionAt,
-  });
+@freezed
+abstract class FriendItem with _$FriendItem {
+  const factory FriendItem({
+    required Character character,
+    @JsonKey(name: 'last_interaction_at') DateTime? lastInteractionAt,
+  }) = _FriendItem;
 
-  factory FriendItem.fromJson(Map<String, dynamic> json) {
-    return FriendItem(
-      character: Character.fromJson(json['character']),
-      lastInteractionAt: json['last_interaction_at'] != null
-          ? DateTime.parse(json['last_interaction_at'])
-          : null,
-    );
-  }
+  factory FriendItem.fromJson(Map<String, dynamic> json) =>
+      _$FriendItemFromJson(json);
 }
 
-class MessageSessionItem {
-  final String sessionId;
-  final Character character;
-  final String? lastMessagePreview;
-  final int unreadCount;
-  final DateTime updatedAt;
-  final bool isPinned;
+@freezed
+abstract class MessageSessionItem with _$MessageSessionItem {
+  const factory MessageSessionItem({
+    @JsonKey(name: 'session_id') required String sessionId,
+    required Character character,
+    @JsonKey(name: 'last_message_preview') String? lastMessagePreview,
+    @JsonKey(name: 'unread_count') @Default(0) int unreadCount,
+    @JsonKey(name: 'updated_at') required DateTime updatedAt,
+    @JsonKey(name: 'is_pinned') @Default(false) bool isPinned,
+  }) = _MessageSessionItem;
 
-  MessageSessionItem({
-    required this.sessionId,
-    required this.character,
-    this.lastMessagePreview,
-    required this.unreadCount,
-    required this.updatedAt,
-    required this.isPinned,
-  });
+  factory MessageSessionItem.fromJson(Map<String, dynamic> json) =>
+      _$MessageSessionItemFromJson(json);
+}
 
-  factory MessageSessionItem.fromJson(Map<String, dynamic> json) {
-    return MessageSessionItem(
-      sessionId: json['session_id'],
-      character: Character.fromJson(json['character']),
-      lastMessagePreview: json['last_message_preview'],
-      unreadCount: json['unread_count'] ?? 0,
-      updatedAt: DateTime.parse(json['updated_at']),
-      isPinned: json['is_pinned'] ?? false,
-    );
-  }
+@freezed
+abstract class FriendRequestItem with _$FriendRequestItem {
+  const factory FriendRequestItem({
+    required int id,
+    required Character character,
+    required String status,
+    String? reason,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
+  }) = _FriendRequestItem;
+
+  factory FriendRequestItem.fromJson(Map<String, dynamic> json) =>
+      _$FriendRequestItemFromJson(json);
+}
+
+@freezed
+abstract class FriendRequestAction with _$FriendRequestAction {
+  const factory FriendRequestAction({
+    required String action,
+  }) = _FriendRequestAction;
+
+  factory FriendRequestAction.fromJson(Map<String, dynamic> json) =>
+      _$FriendRequestActionFromJson(json);
 }

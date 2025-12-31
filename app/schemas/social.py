@@ -24,3 +24,16 @@ class MessageSessionItem(BaseModel):
 
 class PinSessionRequest(BaseModel):
     is_pinned: bool
+
+class FriendRequestItem(BaseModel):
+    id: int
+    character: Character
+    status: str
+    reason: Optional[str] = None
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+class FriendRequestAction(BaseModel):
+    action: str # "accept" | "reject" | "ignore"
