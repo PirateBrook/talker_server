@@ -5,10 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_, func
 from sqlalchemy.orm import selectinload
 
-from app.models.character import Character
+from app.models.character import Character, Tag, character_tags as CharacterTag
 from app.models.interaction import CharacterFollow, CharacterChatInteraction
 from app.models.social_request import FriendRequest, FriendRequestStatus
-from app.models.character_tag import CharacterTag, Tag
 from app.schemas.recommendation import RecommendationEventType
 
 logger = logging.getLogger(__name__)
@@ -165,7 +164,7 @@ class RecommendationService:
             
         # Lazy load tags if not loaded (or ensure they are loaded)
         # Assuming tags are accessible. If strict async, might need query.
-        stmt = select(Tag).join(CharacterTag).filter(CharacterTag.character_id == source_character_id)
+        stmt = select(Tag).join(CharacterTag, Tag.id == CharacterTag.c.tag_id).filter(CharacterTag.c.character_id == source_character_id)
         tags = (await db.execute(stmt)).scalars().all()
         
         if not tags:
@@ -179,9 +178,9 @@ class RecommendationService:
         
         stmt = (
             select(Character)
-            .join(CharacterTag)
+            .join(CharacterTag, Character.id == CharacterTag.c.character_id)
             .filter(
-                CharacterTag.tag_id == target_tag.id,
+                CharacterTag.c.tag_id == target_tag.id,
                 Character.id != source_character_id,
                 Character.id.not_in(subquery_followed)
             )
