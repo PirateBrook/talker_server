@@ -11,6 +11,7 @@ abstract class Tag with _$Tag {
   }) = _Tag;
 
   factory Tag.fromJson(Map<String, dynamic> json) => _$TagFromJson(json);
+  Map<String, dynamic> toJson() => toJson();
 }
 
 @freezed
@@ -22,7 +23,9 @@ abstract class DialogueSample with _$DialogueSample {
     @JsonKey(name: 'character_id') String? characterId,
   }) = _DialogueSample;
 
-  factory DialogueSample.fromJson(Map<String, dynamic> json) => _$DialogueSampleFromJson(json);
+  factory DialogueSample.fromJson(Map<String, dynamic> json) =>
+      _$DialogueSampleFromJson(json);
+  Map<String, dynamic> toJson() => toJson();
 }
 
 @freezed
@@ -40,10 +43,13 @@ abstract class Character with _$Character {
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') required DateTime updatedAt,
     @Default([]) List<Tag> tags,
-    @JsonKey(name: 'dialogue_samples') @Default([]) List<DialogueSample> dialogueSamples,
+    @JsonKey(name: 'dialogue_samples')
+    @Default([])
+    List<DialogueSample> dialogueSamples,
   }) = _Character;
 
-  factory Character.fromJson(Map<String, dynamic> json) => _$CharacterFromJson(json);
+  factory Character.fromJson(Map<String, dynamic> json) =>
+      _$CharacterFromJson(json);
 
   Map<String, dynamic> toJson() => toJson();
 }
