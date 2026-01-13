@@ -71,18 +71,29 @@ class ChatAgent:
         
         if not character:
             return "You are a helpful AI assistant in a game."
+        
+        # Priority: prompt_template > default construction
+        if character.prompt_template:
+            prompt = character.prompt_template
+        else:
+            prompt = f"You are {character.name}.\n"
+            if character.gender:
+                prompt += f"Gender: {character.gender}\n"
+            if character.description:
+                prompt += f"Description: {character.description}\n"
+            if character.personality:
+                prompt += f"Personality: {character.personality}\n"
+            if character.backstory:
+                prompt += f"Backstory: {character.backstory}\n"
+            if character.voice_style:
+                prompt += f"Speaking Style: {character.voice_style}\n"
+            if character.expression_style:
+                prompt += f"Expression Style: {character.expression_style}\n"
+            if character.catchphrases:
+                prompt += f"Catchphrases: {', '.join(character.catchphrases)}\n"
             
-        prompt = f"You are {character.name}.\n"
-        if character.description:
-            prompt += f"Description: {character.description}\n"
-        if character.personality:
-            prompt += f"Personality: {character.personality}\n"
-        if character.backstory:
-            prompt += f"Backstory: {character.backstory}\n"
-        if character.voice_style:
-            prompt += f"Speaking Style: {character.voice_style}\n"
-            
-        prompt += "\nRespond in character. Keep responses concise and engaging. Do not break character."
+            prompt += "\nRespond in character. Keep responses concise and engaging. Do not break character."
+
         return prompt
 
     async def run(

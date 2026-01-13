@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, ForeignKey, Integer, Enum, Boolean
+from sqlalchemy import Column, String, DateTime, ForeignKey, Integer, Enum, Boolean, Text
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -26,6 +26,22 @@ class ChatSession(Base):
     last_message_preview = Column(String, nullable=True)
     unread_count = Column(Integer, default=0)
     
+    # New Settings & Summary
+    summary = Column(Text, nullable=True) # 长期记忆摘要
+    summary_prompt = Column(Text, nullable=True) # 自定义总结提示词
+    background_image = Column(String, nullable=True) # 聊天背景
+    settings = Column(JSONB, default={
+        "is_pinned": False,
+        "is_blocked": False,
+        "allow_stickers": True,
+        "allow_nudge": True,
+        "allow_action_desc": True,
+        "max_reply_tokens": 100,
+        "context_window_size": 10,
+        "auto_summary_enabled": False,
+        "auto_summary_threshold": 20
+    })
+
     # Statistics
     msg_count = Column(Integer, default=0)
     token_usage = Column(Integer, default=0)

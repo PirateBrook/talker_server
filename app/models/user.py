@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, text
+from sqlalchemy import Column, String, Boolean, Text
 from sqlalchemy.dialects.postgresql import UUID
 from app.core.database import Base
 import uuid6
@@ -14,3 +14,6 @@ class User(Base):
     is_superuser = Column(Boolean, default=False)
     is_anonymous = Column(Boolean, default=False)
     google_id = Column(String, unique=True, index=True, nullable=True)
+    
+    # New Fields
+    persona = Column(Text, nullable=True) # User Persona ("我的人设")

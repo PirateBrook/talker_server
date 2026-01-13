@@ -37,6 +37,14 @@ class CharacterBase(BaseModel):
     backstory: Optional[str] = None
     voice_style: Optional[str] = None
     interaction_preference: Optional[str] = None
+    
+    # New Fields
+    gender: Optional[str] = None
+    avatar: Optional[str] = None
+    expression_style: Optional[str] = None
+    catchphrases: Optional[List[str]] = []
+    prompt_template: Optional[str] = None
+    
     custom_attributes: Optional[Dict[str, Any]] = Field(default_factory=dict)
 
 class CharacterCreate(CharacterBase):
@@ -52,6 +60,13 @@ class CharacterUpdate(BaseModel):
     interaction_preference: Optional[str] = None
     custom_attributes: Optional[Dict[str, Any]] = None
     tags: Optional[List[str]] = None
+    
+    # New Fields Updates
+    gender: Optional[str] = None
+    avatar: Optional[str] = None
+    expression_style: Optional[str] = None
+    catchphrases: Optional[List[str]] = None
+    prompt_template: Optional[str] = None
     
 class Character(CharacterBase):
     id: uuid.UUID

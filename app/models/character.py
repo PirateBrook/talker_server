@@ -40,6 +40,13 @@ class Character(Base):
     voice_style = Column(String, nullable=True)
     interaction_preference = Column(String, nullable=True)
     
+    # New Fields
+    gender = Column(String, nullable=True) # MALE, FEMALE, OTHER
+    avatar = Column(String, nullable=True)
+    expression_style = Column(Text, nullable=True) # 表达风格
+    catchphrases = Column(JSON, default=[]) # 习惯用语
+    prompt_template = Column(Text, nullable=True) # 自定义 Prompt 模板
+
     # Extension
     custom_attributes = Column(JSON, default={})
     

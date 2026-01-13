@@ -1,5 +1,5 @@
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import Column, Integer, String, Text, Index
+from sqlalchemy import Column, Integer, String, Text, Index, ForeignKey, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database import Base
@@ -9,6 +9,9 @@ class CharacterMemory(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     character_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), index=True) # Add character_id
+    user_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), index=True, nullable=True) # 关联用户
+    source_message_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), nullable=True) # 来源消息ID
+    is_manual: Mapped[bool] = mapped_column(Boolean, default=False) # 是否手动添加
     content: Mapped[str] = mapped_column(Text) # 记忆文本
     # 1536 维向量 (适配 OpenAI Ada-002 或其他模型)
     embedding: Mapped[list[float]] = mapped_column(Vector(1536)) 

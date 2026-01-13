@@ -6,6 +6,8 @@ from app.models.chat_session import ChatSession, SessionStatus
 from app.core.database import redis_client
 import uuid6
 
+from app.schemas.chat_session import ChatSessionSettings, ChatSessionUpdate
+
 class SessionService:
     async def get_active_session(self, db: AsyncSession, user_id: uuid.UUID, character_id: uuid.UUID) -> ChatSession:
         # 1. Try get from Redis
@@ -65,5 +67,46 @@ class SessionService:
     async def get_session_by_id(self, db: AsyncSession, session_id: uuid.UUID) -> Optional[ChatSession]:
         result = await db.execute(select(ChatSession).filter(ChatSession.id == session_id))
         return result.scalars().first()
+    
+    async def update_session(self, db: AsyncSession, session_id: uuid.UUID, obj_in: ChatSessionUpdate) -> Optional[ChatSession]:
+        session = await self.get_session_by_id(db, session_id)
+        if not session:
+            return None
+            
+        update_data = obj_in.model_dump(exclude_unset=True)
+        
+        # Handle settings specifically if it's a model
+        if "settings" in update_data and update_data["settings"] is not None:
+             # If settings is passed as dict (from Pydantic model dump), it's fine.
+             # But we need to ensure it merges with existing settings or replaces?
+             # PRD implies updating settings.
+             # JSONB update usually replaces the whole object unless we use special operators.
+             # For simplicity, we replace the settings object with the new one.
+             pass
+
+        for field, value in update_data.items():
+            if hasattr(session, field):
+                setattr(session, field, value)
+                
+        db.add(session)
+        await db.commit()
+        await db.refresh(session)
+        return session
+
+    async def clear_session_history(self, db: AsyncSession, session_id: uuid.UUID) -> bool:
+        # Clear summary
+        session = await self.get_session_by_id(db, session_id)
+        if session:
+            session.summary = None
+            session.msg_count = 0
+            session.token_usage = 0
+            db.add(session)
+            await db.commit()
+            
+            # TODO: Clear MongoDB messages if implemented
+            # await mongo_db.messages.delete_many({"session_id": str(session_id)})
+            
+            return True
+        return False
 
 session_service = SessionService()
