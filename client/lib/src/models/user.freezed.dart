@@ -24,6 +24,7 @@ mixin _$User {
   String? get fullName;
   @JsonKey(name: 'is_anonymous')
   bool get isAnonymous;
+  String? get persona;
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
@@ -49,17 +50,18 @@ mixin _$User {
             (identical(other.fullName, fullName) ||
                 other.fullName == fullName) &&
             (identical(other.isAnonymous, isAnonymous) ||
-                other.isAnonymous == isAnonymous));
+                other.isAnonymous == isAnonymous) &&
+            (identical(other.persona, persona) || other.persona == persona));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, email, isActive, isSuperuser, fullName, isAnonymous);
+  int get hashCode => Object.hash(runtimeType, id, email, isActive, isSuperuser,
+      fullName, isAnonymous, persona);
 
   @override
   String toString() {
-    return 'User(id: $id, email: $email, isActive: $isActive, isSuperuser: $isSuperuser, fullName: $fullName, isAnonymous: $isAnonymous)';
+    return 'User(id: $id, email: $email, isActive: $isActive, isSuperuser: $isSuperuser, fullName: $fullName, isAnonymous: $isAnonymous, persona: $persona)';
   }
 }
 
@@ -74,7 +76,8 @@ abstract mixin class $UserCopyWith<$Res> {
       @JsonKey(name: 'is_active') bool isActive,
       @JsonKey(name: 'is_superuser') bool isSuperuser,
       @JsonKey(name: 'full_name') String? fullName,
-      @JsonKey(name: 'is_anonymous') bool isAnonymous});
+      @JsonKey(name: 'is_anonymous') bool isAnonymous,
+      String? persona});
 }
 
 /// @nodoc
@@ -95,6 +98,7 @@ class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
     Object? isSuperuser = null,
     Object? fullName = freezed,
     Object? isAnonymous = null,
+    Object? persona = freezed,
   }) {
     return _then(_self.copyWith(
       id: null == id
@@ -121,6 +125,10 @@ class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
           ? _self.isAnonymous
           : isAnonymous // ignore: cast_nullable_to_non_nullable
               as bool,
+      persona: freezed == persona
+          ? _self.persona
+          : persona // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -224,15 +232,22 @@ extension UserPatterns on User {
             @JsonKey(name: 'is_active') bool isActive,
             @JsonKey(name: 'is_superuser') bool isSuperuser,
             @JsonKey(name: 'full_name') String? fullName,
-            @JsonKey(name: 'is_anonymous') bool isAnonymous)?
+            @JsonKey(name: 'is_anonymous') bool isAnonymous,
+            String? persona)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _User() when $default != null:
-        return $default(_that.id, _that.email, _that.isActive,
-            _that.isSuperuser, _that.fullName, _that.isAnonymous);
+        return $default(
+            _that.id,
+            _that.email,
+            _that.isActive,
+            _that.isSuperuser,
+            _that.fullName,
+            _that.isAnonymous,
+            _that.persona);
       case _:
         return orElse();
     }
@@ -259,14 +274,21 @@ extension UserPatterns on User {
             @JsonKey(name: 'is_active') bool isActive,
             @JsonKey(name: 'is_superuser') bool isSuperuser,
             @JsonKey(name: 'full_name') String? fullName,
-            @JsonKey(name: 'is_anonymous') bool isAnonymous)
+            @JsonKey(name: 'is_anonymous') bool isAnonymous,
+            String? persona)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _User():
-        return $default(_that.id, _that.email, _that.isActive,
-            _that.isSuperuser, _that.fullName, _that.isAnonymous);
+        return $default(
+            _that.id,
+            _that.email,
+            _that.isActive,
+            _that.isSuperuser,
+            _that.fullName,
+            _that.isAnonymous,
+            _that.persona);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -292,14 +314,21 @@ extension UserPatterns on User {
             @JsonKey(name: 'is_active') bool isActive,
             @JsonKey(name: 'is_superuser') bool isSuperuser,
             @JsonKey(name: 'full_name') String? fullName,
-            @JsonKey(name: 'is_anonymous') bool isAnonymous)?
+            @JsonKey(name: 'is_anonymous') bool isAnonymous,
+            String? persona)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _User() when $default != null:
-        return $default(_that.id, _that.email, _that.isActive,
-            _that.isSuperuser, _that.fullName, _that.isAnonymous);
+        return $default(
+            _that.id,
+            _that.email,
+            _that.isActive,
+            _that.isSuperuser,
+            _that.fullName,
+            _that.isAnonymous,
+            _that.persona);
       case _:
         return null;
     }
@@ -315,7 +344,8 @@ class _User implements User {
       @JsonKey(name: 'is_active') this.isActive = true,
       @JsonKey(name: 'is_superuser') this.isSuperuser = false,
       @JsonKey(name: 'full_name') this.fullName,
-      @JsonKey(name: 'is_anonymous') this.isAnonymous = false});
+      @JsonKey(name: 'is_anonymous') this.isAnonymous = false,
+      this.persona});
   factory _User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   @override
@@ -334,6 +364,8 @@ class _User implements User {
   @override
   @JsonKey(name: 'is_anonymous')
   final bool isAnonymous;
+  @override
+  final String? persona;
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
@@ -364,17 +396,18 @@ class _User implements User {
             (identical(other.fullName, fullName) ||
                 other.fullName == fullName) &&
             (identical(other.isAnonymous, isAnonymous) ||
-                other.isAnonymous == isAnonymous));
+                other.isAnonymous == isAnonymous) &&
+            (identical(other.persona, persona) || other.persona == persona));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, email, isActive, isSuperuser, fullName, isAnonymous);
+  int get hashCode => Object.hash(runtimeType, id, email, isActive, isSuperuser,
+      fullName, isAnonymous, persona);
 
   @override
   String toString() {
-    return 'User(id: $id, email: $email, isActive: $isActive, isSuperuser: $isSuperuser, fullName: $fullName, isAnonymous: $isAnonymous)';
+    return 'User(id: $id, email: $email, isActive: $isActive, isSuperuser: $isSuperuser, fullName: $fullName, isAnonymous: $isAnonymous, persona: $persona)';
   }
 }
 
@@ -390,7 +423,8 @@ abstract mixin class _$UserCopyWith<$Res> implements $UserCopyWith<$Res> {
       @JsonKey(name: 'is_active') bool isActive,
       @JsonKey(name: 'is_superuser') bool isSuperuser,
       @JsonKey(name: 'full_name') String? fullName,
-      @JsonKey(name: 'is_anonymous') bool isAnonymous});
+      @JsonKey(name: 'is_anonymous') bool isAnonymous,
+      String? persona});
 }
 
 /// @nodoc
@@ -411,6 +445,7 @@ class __$UserCopyWithImpl<$Res> implements _$UserCopyWith<$Res> {
     Object? isSuperuser = null,
     Object? fullName = freezed,
     Object? isAnonymous = null,
+    Object? persona = freezed,
   }) {
     return _then(_User(
       id: null == id
@@ -437,6 +472,10 @@ class __$UserCopyWithImpl<$Res> implements _$UserCopyWith<$Res> {
           ? _self.isAnonymous
           : isAnonymous // ignore: cast_nullable_to_non_nullable
               as bool,
+      persona: freezed == persona
+          ? _self.persona
+          : persona // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -447,6 +486,7 @@ mixin _$UserRegister {
   String get password;
   @JsonKey(name: 'full_name')
   String? get fullName;
+  String? get persona;
 
   /// Create a copy of UserRegister
   /// with the given fields replaced by the non-null parameter values.
@@ -468,16 +508,18 @@ mixin _$UserRegister {
             (identical(other.password, password) ||
                 other.password == password) &&
             (identical(other.fullName, fullName) ||
-                other.fullName == fullName));
+                other.fullName == fullName) &&
+            (identical(other.persona, persona) || other.persona == persona));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, email, password, fullName);
+  int get hashCode =>
+      Object.hash(runtimeType, email, password, fullName, persona);
 
   @override
   String toString() {
-    return 'UserRegister(email: $email, password: $password, fullName: $fullName)';
+    return 'UserRegister(email: $email, password: $password, fullName: $fullName, persona: $persona)';
   }
 }
 
@@ -490,7 +532,8 @@ abstract mixin class $UserRegisterCopyWith<$Res> {
   $Res call(
       {String email,
       String password,
-      @JsonKey(name: 'full_name') String? fullName});
+      @JsonKey(name: 'full_name') String? fullName,
+      String? persona});
 }
 
 /// @nodoc
@@ -508,6 +551,7 @@ class _$UserRegisterCopyWithImpl<$Res> implements $UserRegisterCopyWith<$Res> {
     Object? email = null,
     Object? password = null,
     Object? fullName = freezed,
+    Object? persona = freezed,
   }) {
     return _then(_self.copyWith(
       email: null == email
@@ -521,6 +565,10 @@ class _$UserRegisterCopyWithImpl<$Res> implements $UserRegisterCopyWith<$Res> {
       fullName: freezed == fullName
           ? _self.fullName
           : fullName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      persona: freezed == persona
+          ? _self.persona
+          : persona // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -620,14 +668,15 @@ extension UserRegisterPatterns on UserRegister {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(String email, String password,
-            @JsonKey(name: 'full_name') String? fullName)?
+            @JsonKey(name: 'full_name') String? fullName, String? persona)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _UserRegister() when $default != null:
-        return $default(_that.email, _that.password, _that.fullName);
+        return $default(
+            _that.email, _that.password, _that.fullName, _that.persona);
       case _:
         return orElse();
     }
@@ -649,13 +698,14 @@ extension UserRegisterPatterns on UserRegister {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(String email, String password,
-            @JsonKey(name: 'full_name') String? fullName)
+            @JsonKey(name: 'full_name') String? fullName, String? persona)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _UserRegister():
-        return $default(_that.email, _that.password, _that.fullName);
+        return $default(
+            _that.email, _that.password, _that.fullName, _that.persona);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -676,13 +726,14 @@ extension UserRegisterPatterns on UserRegister {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(String email, String password,
-            @JsonKey(name: 'full_name') String? fullName)?
+            @JsonKey(name: 'full_name') String? fullName, String? persona)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _UserRegister() when $default != null:
-        return $default(_that.email, _that.password, _that.fullName);
+        return $default(
+            _that.email, _that.password, _that.fullName, _that.persona);
       case _:
         return null;
     }
@@ -695,7 +746,8 @@ class _UserRegister implements UserRegister {
   const _UserRegister(
       {required this.email,
       required this.password,
-      @JsonKey(name: 'full_name') this.fullName});
+      @JsonKey(name: 'full_name') this.fullName,
+      this.persona});
   factory _UserRegister.fromJson(Map<String, dynamic> json) =>
       _$UserRegisterFromJson(json);
 
@@ -706,6 +758,8 @@ class _UserRegister implements UserRegister {
   @override
   @JsonKey(name: 'full_name')
   final String? fullName;
+  @override
+  final String? persona;
 
   /// Create a copy of UserRegister
   /// with the given fields replaced by the non-null parameter values.
@@ -731,16 +785,18 @@ class _UserRegister implements UserRegister {
             (identical(other.password, password) ||
                 other.password == password) &&
             (identical(other.fullName, fullName) ||
-                other.fullName == fullName));
+                other.fullName == fullName) &&
+            (identical(other.persona, persona) || other.persona == persona));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, email, password, fullName);
+  int get hashCode =>
+      Object.hash(runtimeType, email, password, fullName, persona);
 
   @override
   String toString() {
-    return 'UserRegister(email: $email, password: $password, fullName: $fullName)';
+    return 'UserRegister(email: $email, password: $password, fullName: $fullName, persona: $persona)';
   }
 }
 
@@ -755,7 +811,8 @@ abstract mixin class _$UserRegisterCopyWith<$Res>
   $Res call(
       {String email,
       String password,
-      @JsonKey(name: 'full_name') String? fullName});
+      @JsonKey(name: 'full_name') String? fullName,
+      String? persona});
 }
 
 /// @nodoc
@@ -774,6 +831,7 @@ class __$UserRegisterCopyWithImpl<$Res>
     Object? email = null,
     Object? password = null,
     Object? fullName = freezed,
+    Object? persona = freezed,
   }) {
     return _then(_UserRegister(
       email: null == email
@@ -787,6 +845,10 @@ class __$UserRegisterCopyWithImpl<$Res>
       fullName: freezed == fullName
           ? _self.fullName
           : fullName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      persona: freezed == persona
+          ? _self.persona
+          : persona // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }

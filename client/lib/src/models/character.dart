@@ -38,6 +38,13 @@ abstract class Character with _$Character {
     String? backstory,
     @JsonKey(name: 'voice_style') String? voiceStyle,
     @JsonKey(name: 'interaction_preference') String? interactionPreference,
+    // New Fields
+    String? gender,
+    String? avatar,
+    @JsonKey(name: 'expression_style') String? expressionStyle,
+    @Default([]) List<String> catchphrases,
+    @JsonKey(name: 'prompt_template') String? promptTemplate,
+    
     @JsonKey(name: 'custom_attributes') Map<String, dynamic>? customAttributes,
     @JsonKey(name: 'is_active') required bool isActive,
     @JsonKey(name: 'created_at') required DateTime createdAt,

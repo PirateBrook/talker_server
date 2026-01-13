@@ -720,7 +720,14 @@ mixin _$Character {
   @JsonKey(name: 'voice_style')
   String? get voiceStyle;
   @JsonKey(name: 'interaction_preference')
-  String? get interactionPreference;
+  String? get interactionPreference; // New Fields
+  String? get gender;
+  String? get avatar;
+  @JsonKey(name: 'expression_style')
+  String? get expressionStyle;
+  List<String> get catchphrases;
+  @JsonKey(name: 'prompt_template')
+  String? get promptTemplate;
   @JsonKey(name: 'custom_attributes')
   Map<String, dynamic>? get customAttributes;
   @JsonKey(name: 'is_active')
@@ -760,6 +767,14 @@ mixin _$Character {
                 other.voiceStyle == voiceStyle) &&
             (identical(other.interactionPreference, interactionPreference) ||
                 other.interactionPreference == interactionPreference) &&
+            (identical(other.gender, gender) || other.gender == gender) &&
+            (identical(other.avatar, avatar) || other.avatar == avatar) &&
+            (identical(other.expressionStyle, expressionStyle) ||
+                other.expressionStyle == expressionStyle) &&
+            const DeepCollectionEquality()
+                .equals(other.catchphrases, catchphrases) &&
+            (identical(other.promptTemplate, promptTemplate) ||
+                other.promptTemplate == promptTemplate) &&
             const DeepCollectionEquality()
                 .equals(other.customAttributes, customAttributes) &&
             (identical(other.isActive, isActive) ||
@@ -784,6 +799,11 @@ mixin _$Character {
       backstory,
       voiceStyle,
       interactionPreference,
+      gender,
+      avatar,
+      expressionStyle,
+      const DeepCollectionEquality().hash(catchphrases),
+      promptTemplate,
       const DeepCollectionEquality().hash(customAttributes),
       isActive,
       createdAt,
@@ -793,7 +813,7 @@ mixin _$Character {
 
   @override
   String toString() {
-    return 'Character(id: $id, name: $name, description: $description, personality: $personality, backstory: $backstory, voiceStyle: $voiceStyle, interactionPreference: $interactionPreference, customAttributes: $customAttributes, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, tags: $tags, dialogueSamples: $dialogueSamples)';
+    return 'Character(id: $id, name: $name, description: $description, personality: $personality, backstory: $backstory, voiceStyle: $voiceStyle, interactionPreference: $interactionPreference, gender: $gender, avatar: $avatar, expressionStyle: $expressionStyle, catchphrases: $catchphrases, promptTemplate: $promptTemplate, customAttributes: $customAttributes, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, tags: $tags, dialogueSamples: $dialogueSamples)';
   }
 }
 
@@ -810,6 +830,11 @@ abstract mixin class $CharacterCopyWith<$Res> {
       String? backstory,
       @JsonKey(name: 'voice_style') String? voiceStyle,
       @JsonKey(name: 'interaction_preference') String? interactionPreference,
+      String? gender,
+      String? avatar,
+      @JsonKey(name: 'expression_style') String? expressionStyle,
+      List<String> catchphrases,
+      @JsonKey(name: 'prompt_template') String? promptTemplate,
       @JsonKey(name: 'custom_attributes')
       Map<String, dynamic>? customAttributes,
       @JsonKey(name: 'is_active') bool isActive,
@@ -838,6 +863,11 @@ class _$CharacterCopyWithImpl<$Res> implements $CharacterCopyWith<$Res> {
     Object? backstory = freezed,
     Object? voiceStyle = freezed,
     Object? interactionPreference = freezed,
+    Object? gender = freezed,
+    Object? avatar = freezed,
+    Object? expressionStyle = freezed,
+    Object? catchphrases = null,
+    Object? promptTemplate = freezed,
     Object? customAttributes = freezed,
     Object? isActive = null,
     Object? createdAt = null,
@@ -873,6 +903,26 @@ class _$CharacterCopyWithImpl<$Res> implements $CharacterCopyWith<$Res> {
       interactionPreference: freezed == interactionPreference
           ? _self.interactionPreference
           : interactionPreference // ignore: cast_nullable_to_non_nullable
+              as String?,
+      gender: freezed == gender
+          ? _self.gender
+          : gender // ignore: cast_nullable_to_non_nullable
+              as String?,
+      avatar: freezed == avatar
+          ? _self.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String?,
+      expressionStyle: freezed == expressionStyle
+          ? _self.expressionStyle
+          : expressionStyle // ignore: cast_nullable_to_non_nullable
+              as String?,
+      catchphrases: null == catchphrases
+          ? _self.catchphrases
+          : catchphrases // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      promptTemplate: freezed == promptTemplate
+          ? _self.promptTemplate
+          : promptTemplate // ignore: cast_nullable_to_non_nullable
               as String?,
       customAttributes: freezed == customAttributes
           ? _self.customAttributes
@@ -1004,6 +1054,11 @@ extension CharacterPatterns on Character {
             @JsonKey(name: 'voice_style') String? voiceStyle,
             @JsonKey(name: 'interaction_preference')
             String? interactionPreference,
+            String? gender,
+            String? avatar,
+            @JsonKey(name: 'expression_style') String? expressionStyle,
+            List<String> catchphrases,
+            @JsonKey(name: 'prompt_template') String? promptTemplate,
             @JsonKey(name: 'custom_attributes')
             Map<String, dynamic>? customAttributes,
             @JsonKey(name: 'is_active') bool isActive,
@@ -1026,6 +1081,11 @@ extension CharacterPatterns on Character {
             _that.backstory,
             _that.voiceStyle,
             _that.interactionPreference,
+            _that.gender,
+            _that.avatar,
+            _that.expressionStyle,
+            _that.catchphrases,
+            _that.promptTemplate,
             _that.customAttributes,
             _that.isActive,
             _that.createdAt,
@@ -1061,6 +1121,11 @@ extension CharacterPatterns on Character {
             @JsonKey(name: 'voice_style') String? voiceStyle,
             @JsonKey(name: 'interaction_preference')
             String? interactionPreference,
+            String? gender,
+            String? avatar,
+            @JsonKey(name: 'expression_style') String? expressionStyle,
+            List<String> catchphrases,
+            @JsonKey(name: 'prompt_template') String? promptTemplate,
             @JsonKey(name: 'custom_attributes')
             Map<String, dynamic>? customAttributes,
             @JsonKey(name: 'is_active') bool isActive,
@@ -1082,6 +1147,11 @@ extension CharacterPatterns on Character {
             _that.backstory,
             _that.voiceStyle,
             _that.interactionPreference,
+            _that.gender,
+            _that.avatar,
+            _that.expressionStyle,
+            _that.catchphrases,
+            _that.promptTemplate,
             _that.customAttributes,
             _that.isActive,
             _that.createdAt,
@@ -1116,6 +1186,11 @@ extension CharacterPatterns on Character {
             @JsonKey(name: 'voice_style') String? voiceStyle,
             @JsonKey(name: 'interaction_preference')
             String? interactionPreference,
+            String? gender,
+            String? avatar,
+            @JsonKey(name: 'expression_style') String? expressionStyle,
+            List<String> catchphrases,
+            @JsonKey(name: 'prompt_template') String? promptTemplate,
             @JsonKey(name: 'custom_attributes')
             Map<String, dynamic>? customAttributes,
             @JsonKey(name: 'is_active') bool isActive,
@@ -1137,6 +1212,11 @@ extension CharacterPatterns on Character {
             _that.backstory,
             _that.voiceStyle,
             _that.interactionPreference,
+            _that.gender,
+            _that.avatar,
+            _that.expressionStyle,
+            _that.catchphrases,
+            _that.promptTemplate,
             _that.customAttributes,
             _that.isActive,
             _that.createdAt,
@@ -1160,6 +1240,11 @@ class _Character implements Character {
       this.backstory,
       @JsonKey(name: 'voice_style') this.voiceStyle,
       @JsonKey(name: 'interaction_preference') this.interactionPreference,
+      this.gender,
+      this.avatar,
+      @JsonKey(name: 'expression_style') this.expressionStyle,
+      final List<String> catchphrases = const [],
+      @JsonKey(name: 'prompt_template') this.promptTemplate,
       @JsonKey(name: 'custom_attributes')
       final Map<String, dynamic>? customAttributes,
       @JsonKey(name: 'is_active') required this.isActive,
@@ -1168,7 +1253,8 @@ class _Character implements Character {
       final List<Tag> tags = const [],
       @JsonKey(name: 'dialogue_samples')
       final List<DialogueSample> dialogueSamples = const []})
-      : _customAttributes = customAttributes,
+      : _catchphrases = catchphrases,
+        _customAttributes = customAttributes,
         _tags = tags,
         _dialogueSamples = dialogueSamples;
   factory _Character.fromJson(Map<String, dynamic> json) =>
@@ -1190,6 +1276,26 @@ class _Character implements Character {
   @override
   @JsonKey(name: 'interaction_preference')
   final String? interactionPreference;
+// New Fields
+  @override
+  final String? gender;
+  @override
+  final String? avatar;
+  @override
+  @JsonKey(name: 'expression_style')
+  final String? expressionStyle;
+  final List<String> _catchphrases;
+  @override
+  @JsonKey()
+  List<String> get catchphrases {
+    if (_catchphrases is EqualUnmodifiableListView) return _catchphrases;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_catchphrases);
+  }
+
+  @override
+  @JsonKey(name: 'prompt_template')
+  final String? promptTemplate;
   final Map<String, dynamic>? _customAttributes;
   @override
   @JsonKey(name: 'custom_attributes')
@@ -1260,6 +1366,14 @@ class _Character implements Character {
                 other.voiceStyle == voiceStyle) &&
             (identical(other.interactionPreference, interactionPreference) ||
                 other.interactionPreference == interactionPreference) &&
+            (identical(other.gender, gender) || other.gender == gender) &&
+            (identical(other.avatar, avatar) || other.avatar == avatar) &&
+            (identical(other.expressionStyle, expressionStyle) ||
+                other.expressionStyle == expressionStyle) &&
+            const DeepCollectionEquality()
+                .equals(other._catchphrases, _catchphrases) &&
+            (identical(other.promptTemplate, promptTemplate) ||
+                other.promptTemplate == promptTemplate) &&
             const DeepCollectionEquality()
                 .equals(other._customAttributes, _customAttributes) &&
             (identical(other.isActive, isActive) ||
@@ -1284,6 +1398,11 @@ class _Character implements Character {
       backstory,
       voiceStyle,
       interactionPreference,
+      gender,
+      avatar,
+      expressionStyle,
+      const DeepCollectionEquality().hash(_catchphrases),
+      promptTemplate,
       const DeepCollectionEquality().hash(_customAttributes),
       isActive,
       createdAt,
@@ -1293,7 +1412,7 @@ class _Character implements Character {
 
   @override
   String toString() {
-    return 'Character(id: $id, name: $name, description: $description, personality: $personality, backstory: $backstory, voiceStyle: $voiceStyle, interactionPreference: $interactionPreference, customAttributes: $customAttributes, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, tags: $tags, dialogueSamples: $dialogueSamples)';
+    return 'Character(id: $id, name: $name, description: $description, personality: $personality, backstory: $backstory, voiceStyle: $voiceStyle, interactionPreference: $interactionPreference, gender: $gender, avatar: $avatar, expressionStyle: $expressionStyle, catchphrases: $catchphrases, promptTemplate: $promptTemplate, customAttributes: $customAttributes, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, tags: $tags, dialogueSamples: $dialogueSamples)';
   }
 }
 
@@ -1313,6 +1432,11 @@ abstract mixin class _$CharacterCopyWith<$Res>
       String? backstory,
       @JsonKey(name: 'voice_style') String? voiceStyle,
       @JsonKey(name: 'interaction_preference') String? interactionPreference,
+      String? gender,
+      String? avatar,
+      @JsonKey(name: 'expression_style') String? expressionStyle,
+      List<String> catchphrases,
+      @JsonKey(name: 'prompt_template') String? promptTemplate,
       @JsonKey(name: 'custom_attributes')
       Map<String, dynamic>? customAttributes,
       @JsonKey(name: 'is_active') bool isActive,
@@ -1341,6 +1465,11 @@ class __$CharacterCopyWithImpl<$Res> implements _$CharacterCopyWith<$Res> {
     Object? backstory = freezed,
     Object? voiceStyle = freezed,
     Object? interactionPreference = freezed,
+    Object? gender = freezed,
+    Object? avatar = freezed,
+    Object? expressionStyle = freezed,
+    Object? catchphrases = null,
+    Object? promptTemplate = freezed,
     Object? customAttributes = freezed,
     Object? isActive = null,
     Object? createdAt = null,
@@ -1376,6 +1505,26 @@ class __$CharacterCopyWithImpl<$Res> implements _$CharacterCopyWith<$Res> {
       interactionPreference: freezed == interactionPreference
           ? _self.interactionPreference
           : interactionPreference // ignore: cast_nullable_to_non_nullable
+              as String?,
+      gender: freezed == gender
+          ? _self.gender
+          : gender // ignore: cast_nullable_to_non_nullable
+              as String?,
+      avatar: freezed == avatar
+          ? _self.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String?,
+      expressionStyle: freezed == expressionStyle
+          ? _self.expressionStyle
+          : expressionStyle // ignore: cast_nullable_to_non_nullable
+              as String?,
+      catchphrases: null == catchphrases
+          ? _self._catchphrases
+          : catchphrases // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      promptTemplate: freezed == promptTemplate
+          ? _self.promptTemplate
+          : promptTemplate // ignore: cast_nullable_to_non_nullable
               as String?,
       customAttributes: freezed == customAttributes
           ? _self._customAttributes

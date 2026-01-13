@@ -6,7 +6,8 @@ import 'package:talker_client/src/models/token.dart';
 import 'package:talker_client/src/models/user.dart';
 import 'package:talker_client/src/models/social.dart';
 import 'package:talker_client/src/models/stats.dart';
-import 'package:talker_client/src/models/session.dart';
+import 'package:talker_client/src/models/chat_session.dart';
+import 'package:talker_client/src/models/memory.dart';
 
 part 'api_service.g.dart';
 
@@ -75,14 +76,44 @@ abstract class ApiService {
 
   // --- Sessions ---
   @GET("/sessions/active_session")
-  Future<SessionResponse> getActiveSession({
+  Future<ChatSession> getActiveSession({
     @Query("character_id") required String characterId,
   });
 
   @POST("/sessions/reset")
-  Future<SessionResponse> resetSession({
+  Future<ChatSession> resetSession({
     @Query("character_id") required String characterId,
   });
+
+  @PUT("/sessions/{session_id}/settings")
+  Future<ChatSession> updateSessionSettings(
+    @Path("session_id") String sessionId,
+    @Body() ChatSessionUpdate sessionIn,
+  );
+
+  @POST("/sessions/{session_id}/clear")
+  Future<HttpResponse> clearSessionHistory(
+    @Path("session_id") String sessionId,
+  );
+
+  // --- Memories ---
+  @GET("/sessions/{session_id}/memories")
+  Future<List<CharacterMemory>> getSessionMemories(
+    @Path("session_id") String sessionId, {
+    @Query("skip") int skip = 0,
+    @Query("limit") int limit = 50,
+  });
+
+  @POST("/sessions/{session_id}/memories")
+  Future<CharacterMemory> addSessionMemory(
+    @Path("session_id") String sessionId,
+    @Body() MemoryCreate memoryIn,
+  );
+
+  @DELETE("/memories/{memory_id}")
+  Future<HttpResponse> deleteMemory(
+    @Path("memory_id") int memoryId,
+  );
 
   // --- Chat ---
   @GET("/chat/history")

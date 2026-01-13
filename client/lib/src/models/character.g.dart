@@ -40,6 +40,14 @@ _Character _$CharacterFromJson(Map<String, dynamic> json) => _Character(
       backstory: json['backstory'] as String?,
       voiceStyle: json['voice_style'] as String?,
       interactionPreference: json['interaction_preference'] as String?,
+      gender: json['gender'] as String?,
+      avatar: json['avatar'] as String?,
+      expressionStyle: json['expression_style'] as String?,
+      catchphrases: (json['catchphrases'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      promptTemplate: json['prompt_template'] as String?,
       customAttributes: json['custom_attributes'] as Map<String, dynamic>?,
       isActive: json['is_active'] as bool,
       createdAt: DateTime.parse(json['created_at'] as String),
@@ -63,6 +71,11 @@ Map<String, dynamic> _$CharacterToJson(_Character instance) =>
       'backstory': instance.backstory,
       'voice_style': instance.voiceStyle,
       'interaction_preference': instance.interactionPreference,
+      'gender': instance.gender,
+      'avatar': instance.avatar,
+      'expression_style': instance.expressionStyle,
+      'catchphrases': instance.catchphrases,
+      'prompt_template': instance.promptTemplate,
       'custom_attributes': instance.customAttributes,
       'is_active': instance.isActive,
       'created_at': instance.createdAt.toIso8601String(),

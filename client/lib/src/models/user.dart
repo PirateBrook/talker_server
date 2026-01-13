@@ -12,6 +12,7 @@ abstract class User with _$User {
     @JsonKey(name: 'is_superuser') @Default(false) bool isSuperuser,
     @JsonKey(name: 'full_name') String? fullName,
     @JsonKey(name: 'is_anonymous') @Default(false) bool isAnonymous,
+    String? persona,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -23,6 +24,7 @@ abstract class UserRegister with _$UserRegister {
     required String email,
     required String password,
     @JsonKey(name: 'full_name') String? fullName,
+    String? persona,
   }) = _UserRegister;
 
   factory UserRegister.fromJson(Map<String, dynamic> json) =>
