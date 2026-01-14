@@ -39,7 +39,9 @@ class ChatSession(Base):
         "max_reply_tokens": 100,
         "context_window_size": 10,
         "auto_summary_enabled": False,
-        "auto_summary_threshold": 20
+        "auto_summary_threshold": 20,
+        "voice_id": None,
+        "voice_frequency": "occasionally"
     })
 
     # Statistics

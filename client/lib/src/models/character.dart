@@ -44,7 +44,7 @@ abstract class Character with _$Character {
     @JsonKey(name: 'expression_style') String? expressionStyle,
     @Default([]) List<String> catchphrases,
     @JsonKey(name: 'prompt_template') String? promptTemplate,
-    
+    @JsonKey(name: 'default_voice_id') String? defaultVoiceId,
     @JsonKey(name: 'custom_attributes') Map<String, dynamic>? customAttributes,
     @JsonKey(name: 'is_active') required bool isActive,
     @JsonKey(name: 'created_at') required DateTime createdAt,

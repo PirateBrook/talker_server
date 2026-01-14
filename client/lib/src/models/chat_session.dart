@@ -14,8 +14,12 @@ abstract class ChatSessionSettings with _$ChatSessionSettings {
     @JsonKey(name: 'allow_action_desc') @Default(true) bool allowActionDesc,
     @JsonKey(name: 'max_reply_tokens') @Default(100) int maxReplyTokens,
     @JsonKey(name: 'context_window_size') @Default(10) int contextWindowSize,
-    @JsonKey(name: 'auto_summary_enabled') @Default(false) bool autoSummaryEnabled,
-    @JsonKey(name: 'auto_summary_threshold') @Default(20) int autoSummaryThreshold,
+    @JsonKey(name: 'auto_summary_enabled')
+    @Default(false)
+    bool autoSummaryEnabled,
+    @JsonKey(name: 'auto_summary_threshold')
+    @Default(20)
+    int autoSummaryThreshold,
   }) = _ChatSessionSettings;
 
   factory ChatSessionSettings.fromJson(Map<String, dynamic> json) =>
@@ -32,18 +36,16 @@ abstract class ChatSession with _$ChatSession {
     String? title,
     @Default("active") String status,
     @JsonKey(name: 'is_pinned') @Default(false) bool isPinned,
-    
+
     // Settings & Summary
     String? summary,
     @JsonKey(name: 'summary_prompt') String? summaryPrompt,
     @JsonKey(name: 'background_image') String? backgroundImage,
     @Default(ChatSessionSettings()) ChatSessionSettings settings,
-    
     @JsonKey(name: 'last_message_preview') String? lastMessagePreview,
     @JsonKey(name: 'unread_count') @Default(0) int unreadCount,
     @JsonKey(name: 'msg_count') @Default(0) int msgCount,
     @JsonKey(name: 'token_usage') @Default(0) int tokenUsage,
-    
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') required DateTime updatedAt,
   }) = _ChatSession;

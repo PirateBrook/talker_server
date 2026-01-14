@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 import uuid
 from datetime import datetime
 from app.schemas.character import Character
+from app.schemas.voice import VoiceFrequency
 
 class ChatSessionSettings(BaseModel):
     is_pinned: bool = False
@@ -14,6 +15,10 @@ class ChatSessionSettings(BaseModel):
     context_window_size: int = 10
     auto_summary_enabled: bool = False
     auto_summary_threshold: int = 20
+    
+    # Voice Settings
+    voice_id: Optional[str] = None
+    voice_frequency: VoiceFrequency = VoiceFrequency.OCCASIONALLY
 
 class ChatSessionBase(BaseModel):
     title: Optional[str] = None
@@ -36,7 +41,7 @@ class ChatSessionUpdate(BaseModel):
     summary: Optional[str] = None
     summary_prompt: Optional[str] = None
     background_image: Optional[str] = None
-    settings: Optional[ChatSessionSettings] = None
+    settings: Optional[ChatSessionSettingsUpdate] = None
 
 class ChatSession(ChatSessionBase):
     id: uuid.UUID

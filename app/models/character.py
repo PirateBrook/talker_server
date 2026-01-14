@@ -46,6 +46,7 @@ class Character(Base):
     expression_style = Column(Text, nullable=True) # 表达风格
     catchphrases = Column(JSON, default=[]) # 习惯用语
     prompt_template = Column(Text, nullable=True) # 自定义 Prompt 模板
+    default_voice_id = Column(String, nullable=True) # 默认音色 ID
 
     # Extension
     custom_attributes = Column(JSON, default={})

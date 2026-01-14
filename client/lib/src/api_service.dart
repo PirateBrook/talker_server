@@ -8,6 +8,7 @@ import 'package:talker_client/src/models/social.dart';
 import 'package:talker_client/src/models/stats.dart';
 import 'package:talker_client/src/models/chat_session.dart';
 import 'package:talker_client/src/models/memory.dart';
+import 'package:talker_client/src/models/voice.dart';
 
 part 'api_service.g.dart';
 
@@ -151,4 +152,8 @@ abstract class ApiService {
     @Path("request_id") int requestId,
     @Body() FriendRequestAction body,
   );
+
+  // --- Voices ---
+  @GET("/voices/")
+  Future<VoiceList> getVoices();
 }

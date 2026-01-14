@@ -728,6 +728,8 @@ mixin _$Character {
   List<String> get catchphrases;
   @JsonKey(name: 'prompt_template')
   String? get promptTemplate;
+  @JsonKey(name: 'default_voice_id')
+  String? get defaultVoiceId;
   @JsonKey(name: 'custom_attributes')
   Map<String, dynamic>? get customAttributes;
   @JsonKey(name: 'is_active')
@@ -775,6 +777,8 @@ mixin _$Character {
                 .equals(other.catchphrases, catchphrases) &&
             (identical(other.promptTemplate, promptTemplate) ||
                 other.promptTemplate == promptTemplate) &&
+            (identical(other.defaultVoiceId, defaultVoiceId) ||
+                other.defaultVoiceId == defaultVoiceId) &&
             const DeepCollectionEquality()
                 .equals(other.customAttributes, customAttributes) &&
             (identical(other.isActive, isActive) ||
@@ -790,30 +794,32 @@ mixin _$Character {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      name,
-      description,
-      personality,
-      backstory,
-      voiceStyle,
-      interactionPreference,
-      gender,
-      avatar,
-      expressionStyle,
-      const DeepCollectionEquality().hash(catchphrases),
-      promptTemplate,
-      const DeepCollectionEquality().hash(customAttributes),
-      isActive,
-      createdAt,
-      updatedAt,
-      const DeepCollectionEquality().hash(tags),
-      const DeepCollectionEquality().hash(dialogueSamples));
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        name,
+        description,
+        personality,
+        backstory,
+        voiceStyle,
+        interactionPreference,
+        gender,
+        avatar,
+        expressionStyle,
+        const DeepCollectionEquality().hash(catchphrases),
+        promptTemplate,
+        defaultVoiceId,
+        const DeepCollectionEquality().hash(customAttributes),
+        isActive,
+        createdAt,
+        updatedAt,
+        const DeepCollectionEquality().hash(tags),
+        const DeepCollectionEquality().hash(dialogueSamples)
+      ]);
 
   @override
   String toString() {
-    return 'Character(id: $id, name: $name, description: $description, personality: $personality, backstory: $backstory, voiceStyle: $voiceStyle, interactionPreference: $interactionPreference, gender: $gender, avatar: $avatar, expressionStyle: $expressionStyle, catchphrases: $catchphrases, promptTemplate: $promptTemplate, customAttributes: $customAttributes, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, tags: $tags, dialogueSamples: $dialogueSamples)';
+    return 'Character(id: $id, name: $name, description: $description, personality: $personality, backstory: $backstory, voiceStyle: $voiceStyle, interactionPreference: $interactionPreference, gender: $gender, avatar: $avatar, expressionStyle: $expressionStyle, catchphrases: $catchphrases, promptTemplate: $promptTemplate, defaultVoiceId: $defaultVoiceId, customAttributes: $customAttributes, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, tags: $tags, dialogueSamples: $dialogueSamples)';
   }
 }
 
@@ -835,6 +841,7 @@ abstract mixin class $CharacterCopyWith<$Res> {
       @JsonKey(name: 'expression_style') String? expressionStyle,
       List<String> catchphrases,
       @JsonKey(name: 'prompt_template') String? promptTemplate,
+      @JsonKey(name: 'default_voice_id') String? defaultVoiceId,
       @JsonKey(name: 'custom_attributes')
       Map<String, dynamic>? customAttributes,
       @JsonKey(name: 'is_active') bool isActive,
@@ -868,6 +875,7 @@ class _$CharacterCopyWithImpl<$Res> implements $CharacterCopyWith<$Res> {
     Object? expressionStyle = freezed,
     Object? catchphrases = null,
     Object? promptTemplate = freezed,
+    Object? defaultVoiceId = freezed,
     Object? customAttributes = freezed,
     Object? isActive = null,
     Object? createdAt = null,
@@ -923,6 +931,10 @@ class _$CharacterCopyWithImpl<$Res> implements $CharacterCopyWith<$Res> {
       promptTemplate: freezed == promptTemplate
           ? _self.promptTemplate
           : promptTemplate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      defaultVoiceId: freezed == defaultVoiceId
+          ? _self.defaultVoiceId
+          : defaultVoiceId // ignore: cast_nullable_to_non_nullable
               as String?,
       customAttributes: freezed == customAttributes
           ? _self.customAttributes
@@ -1059,6 +1071,7 @@ extension CharacterPatterns on Character {
             @JsonKey(name: 'expression_style') String? expressionStyle,
             List<String> catchphrases,
             @JsonKey(name: 'prompt_template') String? promptTemplate,
+            @JsonKey(name: 'default_voice_id') String? defaultVoiceId,
             @JsonKey(name: 'custom_attributes')
             Map<String, dynamic>? customAttributes,
             @JsonKey(name: 'is_active') bool isActive,
@@ -1086,6 +1099,7 @@ extension CharacterPatterns on Character {
             _that.expressionStyle,
             _that.catchphrases,
             _that.promptTemplate,
+            _that.defaultVoiceId,
             _that.customAttributes,
             _that.isActive,
             _that.createdAt,
@@ -1126,6 +1140,7 @@ extension CharacterPatterns on Character {
             @JsonKey(name: 'expression_style') String? expressionStyle,
             List<String> catchphrases,
             @JsonKey(name: 'prompt_template') String? promptTemplate,
+            @JsonKey(name: 'default_voice_id') String? defaultVoiceId,
             @JsonKey(name: 'custom_attributes')
             Map<String, dynamic>? customAttributes,
             @JsonKey(name: 'is_active') bool isActive,
@@ -1152,6 +1167,7 @@ extension CharacterPatterns on Character {
             _that.expressionStyle,
             _that.catchphrases,
             _that.promptTemplate,
+            _that.defaultVoiceId,
             _that.customAttributes,
             _that.isActive,
             _that.createdAt,
@@ -1191,6 +1207,7 @@ extension CharacterPatterns on Character {
             @JsonKey(name: 'expression_style') String? expressionStyle,
             List<String> catchphrases,
             @JsonKey(name: 'prompt_template') String? promptTemplate,
+            @JsonKey(name: 'default_voice_id') String? defaultVoiceId,
             @JsonKey(name: 'custom_attributes')
             Map<String, dynamic>? customAttributes,
             @JsonKey(name: 'is_active') bool isActive,
@@ -1217,6 +1234,7 @@ extension CharacterPatterns on Character {
             _that.expressionStyle,
             _that.catchphrases,
             _that.promptTemplate,
+            _that.defaultVoiceId,
             _that.customAttributes,
             _that.isActive,
             _that.createdAt,
@@ -1245,6 +1263,7 @@ class _Character implements Character {
       @JsonKey(name: 'expression_style') this.expressionStyle,
       final List<String> catchphrases = const [],
       @JsonKey(name: 'prompt_template') this.promptTemplate,
+      @JsonKey(name: 'default_voice_id') this.defaultVoiceId,
       @JsonKey(name: 'custom_attributes')
       final Map<String, dynamic>? customAttributes,
       @JsonKey(name: 'is_active') required this.isActive,
@@ -1296,6 +1315,9 @@ class _Character implements Character {
   @override
   @JsonKey(name: 'prompt_template')
   final String? promptTemplate;
+  @override
+  @JsonKey(name: 'default_voice_id')
+  final String? defaultVoiceId;
   final Map<String, dynamic>? _customAttributes;
   @override
   @JsonKey(name: 'custom_attributes')
@@ -1374,6 +1396,8 @@ class _Character implements Character {
                 .equals(other._catchphrases, _catchphrases) &&
             (identical(other.promptTemplate, promptTemplate) ||
                 other.promptTemplate == promptTemplate) &&
+            (identical(other.defaultVoiceId, defaultVoiceId) ||
+                other.defaultVoiceId == defaultVoiceId) &&
             const DeepCollectionEquality()
                 .equals(other._customAttributes, _customAttributes) &&
             (identical(other.isActive, isActive) ||
@@ -1389,30 +1413,32 @@ class _Character implements Character {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      name,
-      description,
-      personality,
-      backstory,
-      voiceStyle,
-      interactionPreference,
-      gender,
-      avatar,
-      expressionStyle,
-      const DeepCollectionEquality().hash(_catchphrases),
-      promptTemplate,
-      const DeepCollectionEquality().hash(_customAttributes),
-      isActive,
-      createdAt,
-      updatedAt,
-      const DeepCollectionEquality().hash(_tags),
-      const DeepCollectionEquality().hash(_dialogueSamples));
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        name,
+        description,
+        personality,
+        backstory,
+        voiceStyle,
+        interactionPreference,
+        gender,
+        avatar,
+        expressionStyle,
+        const DeepCollectionEquality().hash(_catchphrases),
+        promptTemplate,
+        defaultVoiceId,
+        const DeepCollectionEquality().hash(_customAttributes),
+        isActive,
+        createdAt,
+        updatedAt,
+        const DeepCollectionEquality().hash(_tags),
+        const DeepCollectionEquality().hash(_dialogueSamples)
+      ]);
 
   @override
   String toString() {
-    return 'Character(id: $id, name: $name, description: $description, personality: $personality, backstory: $backstory, voiceStyle: $voiceStyle, interactionPreference: $interactionPreference, gender: $gender, avatar: $avatar, expressionStyle: $expressionStyle, catchphrases: $catchphrases, promptTemplate: $promptTemplate, customAttributes: $customAttributes, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, tags: $tags, dialogueSamples: $dialogueSamples)';
+    return 'Character(id: $id, name: $name, description: $description, personality: $personality, backstory: $backstory, voiceStyle: $voiceStyle, interactionPreference: $interactionPreference, gender: $gender, avatar: $avatar, expressionStyle: $expressionStyle, catchphrases: $catchphrases, promptTemplate: $promptTemplate, defaultVoiceId: $defaultVoiceId, customAttributes: $customAttributes, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, tags: $tags, dialogueSamples: $dialogueSamples)';
   }
 }
 
@@ -1437,6 +1463,7 @@ abstract mixin class _$CharacterCopyWith<$Res>
       @JsonKey(name: 'expression_style') String? expressionStyle,
       List<String> catchphrases,
       @JsonKey(name: 'prompt_template') String? promptTemplate,
+      @JsonKey(name: 'default_voice_id') String? defaultVoiceId,
       @JsonKey(name: 'custom_attributes')
       Map<String, dynamic>? customAttributes,
       @JsonKey(name: 'is_active') bool isActive,
@@ -1470,6 +1497,7 @@ class __$CharacterCopyWithImpl<$Res> implements _$CharacterCopyWith<$Res> {
     Object? expressionStyle = freezed,
     Object? catchphrases = null,
     Object? promptTemplate = freezed,
+    Object? defaultVoiceId = freezed,
     Object? customAttributes = freezed,
     Object? isActive = null,
     Object? createdAt = null,
@@ -1525,6 +1553,10 @@ class __$CharacterCopyWithImpl<$Res> implements _$CharacterCopyWith<$Res> {
       promptTemplate: freezed == promptTemplate
           ? _self.promptTemplate
           : promptTemplate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      defaultVoiceId: freezed == defaultVoiceId
+          ? _self.defaultVoiceId
+          : defaultVoiceId // ignore: cast_nullable_to_non_nullable
               as String?,
       customAttributes: freezed == customAttributes
           ? _self._customAttributes

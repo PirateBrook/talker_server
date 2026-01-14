@@ -67,6 +67,7 @@ class CharacterUpdate(BaseModel):
     expression_style: Optional[str] = None
     catchphrases: Optional[List[str]] = None
     prompt_template: Optional[str] = None
+    default_voice_id: Optional[str] = None
     
 class Character(CharacterBase):
     id: uuid.UUID

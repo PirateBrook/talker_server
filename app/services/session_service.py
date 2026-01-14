@@ -77,12 +77,14 @@ class SessionService:
         
         # Handle settings specifically if it's a model
         if "settings" in update_data and update_data["settings"] is not None:
-             # If settings is passed as dict (from Pydantic model dump), it's fine.
-             # But we need to ensure it merges with existing settings or replaces?
-             # PRD implies updating settings.
-             # JSONB update usually replaces the whole object unless we use special operators.
-             # For simplicity, we replace the settings object with the new one.
-             pass
+             new_settings = update_data["settings"]
+             current_settings = dict(session.settings) if session.settings else {}
+             
+             # Merge
+             current_settings.update(new_settings)
+             session.settings = current_settings
+             
+             del update_data["settings"]
 
         for field, value in update_data.items():
             if hasattr(session, field):
