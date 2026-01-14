@@ -16,3 +16,5 @@ wheels/
 .env.test
 .env.*
 !.env.example
+client/.dart_tool/
+client/pubspec.lock
