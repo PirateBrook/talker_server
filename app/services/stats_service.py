@@ -121,12 +121,12 @@ class StatsService:
         
         # Trigger Recommendation Rule: Churn Recovery
         await recommendation_service.trigger_rules(
-            db, uuid.UUID(user_id), RecommendationEventType.UNFOLLOW, {"character_id": character_id}
+            db, uuid.UUID(str(user_id)), RecommendationEventType.UNFOLLOW, {"character_id": character_id}
         )
         
         return True
 
-    async def unfollow_character(self, db: AsyncSession, character_id: int, user_id: str) -> bool:
+    async def unfollow_character(self, db: AsyncSession, character_id: uuid.UUID, user_id: uuid.UUID) -> bool:
         stats = await self.get_stats(db, character_id)
         
         result = await db.execute(
