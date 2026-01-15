@@ -5,3 +5,4 @@ export 'token.dart';
 export 'user.dart';
 export 'social.dart';
 export 'chat_session.dart';
+export 'voice.dart';

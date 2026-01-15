@@ -23,5 +23,6 @@ abstract class VoiceList with _$VoiceList {
     required List<Voice> voices,
   }) = _VoiceList;
 
-  factory VoiceList.fromJson(Map<String, dynamic> json) => _$VoiceListFromJson(json);
+  factory VoiceList.fromJson(Map<String, dynamic> json) =>
+      _$VoiceListFromJson(json);
 }
