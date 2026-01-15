@@ -60,3 +60,22 @@ abstract class Character with _$Character {
 
   Map<String, dynamic> toJson() => toJson();
 }
+
+extension CharacterExtension on Character {
+  // Getters
+  int? get age => customAttributes?['age'] as int?;
+  String? get height => customAttributes?['height'] as String?;
+  String? get archetype => customAttributes?['archetype'] as String?;
+  String? get hobby => customAttributes?['hobby'] as String?;
+  String? get source => customAttributes?['source'] as String?;
+  String? get dataVersion => customAttributes?['data_version'] as String?;
+
+  // CopyWith helpers (Since Character is immutable and freezed, we typically use copyWith from freezed)
+  // However, updating nested customAttributes is tricky with standard copyWith.
+  // We can provide a helper to update specific custom attributes.
+  Character updateCustomAttribute(String key, dynamic value) {
+    final currentAttributes = Map<String, dynamic>.from(customAttributes ?? {});
+    currentAttributes[key] = value;
+    return copyWith(customAttributes: currentAttributes);
+  }
+}
