@@ -2,6 +2,7 @@ import uuid
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
+from sqlalchemy.orm import selectinload
 from app.models.chat_session import ChatSession, SessionStatus
 from app.core.database import redis_client
 import uuid6
@@ -18,7 +19,11 @@ class SessionService:
             try:
                 session_id = uuid.UUID(session_id_str)
                 # Verify existence in DB
-                result = await db.execute(select(ChatSession).filter(ChatSession.id == session_id))
+                result = await db.execute(
+                    select(ChatSession)
+                    .options(selectinload(ChatSession.character))
+                    .filter(ChatSession.id == session_id)
+                )
                 session = result.scalars().first()
                 if session and session.status == SessionStatus.ACTIVE:
                     return session
@@ -45,7 +50,13 @@ class SessionService:
         redis_key = f"active_session:{user_id}:{character_id}"
         await redis_client.set(redis_key, str(new_session.id))
         
-        return new_session
+        # Reload with relationships
+        result = await db.execute(
+            select(ChatSession)
+            .options(selectinload(ChatSession.character))
+            .filter(ChatSession.id == new_session.id)
+        )
+        return result.scalars().first()
 
     async def reset_session(self, db: AsyncSession, user_id: uuid.UUID, character_id: uuid.UUID) -> ChatSession:
         # 1. Find current session
@@ -65,7 +76,11 @@ class SessionService:
         return await self.create_session(db, user_id, character_id)
 
     async def get_session_by_id(self, db: AsyncSession, session_id: uuid.UUID) -> Optional[ChatSession]:
-        result = await db.execute(select(ChatSession).filter(ChatSession.id == session_id))
+        result = await db.execute(
+            select(ChatSession)
+            .options(selectinload(ChatSession.character))
+            .filter(ChatSession.id == session_id)
+        )
         return result.scalars().first()
     
     async def update_session(self, db: AsyncSession, session_id: uuid.UUID, obj_in: ChatSessionUpdate) -> Optional[ChatSession]:
