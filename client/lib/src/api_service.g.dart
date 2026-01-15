@@ -450,7 +450,8 @@ class _ApiService implements ApiService {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = sessionIn;
+    final _data = <String, dynamic>{};
+    _data.addAll(sessionIn.toJson());
     final _options = _setStreamType<ChatSession>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
@@ -537,7 +538,8 @@ class _ApiService implements ApiService {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = memoryIn;
+    final _data = <String, dynamic>{};
+    _data.addAll(memoryIn.toJson());
     final _options = _setStreamType<CharacterMemory>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -751,7 +753,8 @@ class _ApiService implements ApiService {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<FriendRequestItem>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(

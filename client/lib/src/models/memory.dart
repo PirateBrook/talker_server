@@ -27,4 +27,6 @@ abstract class MemoryCreate with _$MemoryCreate {
 
   factory MemoryCreate.fromJson(Map<String, dynamic> json) =>
       _$MemoryCreateFromJson(json);
+
+  toJson() => toJson();
 }

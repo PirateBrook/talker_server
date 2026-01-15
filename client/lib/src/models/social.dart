@@ -52,4 +52,6 @@ abstract class FriendRequestAction with _$FriendRequestAction {
 
   factory FriendRequestAction.fromJson(Map<String, dynamic> json) =>
       _$FriendRequestActionFromJson(json);
+
+  toJson() => toJson();
 }

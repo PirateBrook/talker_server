@@ -18,6 +18,8 @@ _ChatSessionSettings _$ChatSessionSettingsFromJson(Map<String, dynamic> json) =>
       autoSummaryEnabled: json['auto_summary_enabled'] as bool? ?? false,
       autoSummaryThreshold:
           (json['auto_summary_threshold'] as num?)?.toInt() ?? 20,
+      voiceReplyFrequency:
+          json['voice_reply_frequency'] as String? ?? 'occasionally',
     );
 
 Map<String, dynamic> _$ChatSessionSettingsToJson(
@@ -32,6 +34,7 @@ Map<String, dynamic> _$ChatSessionSettingsToJson(
       'context_window_size': instance.contextWindowSize,
       'auto_summary_enabled': instance.autoSummaryEnabled,
       'auto_summary_threshold': instance.autoSummaryThreshold,
+      'voice_reply_frequency': instance.voiceReplyFrequency,
     };
 
 _ChatSession _$ChatSessionFromJson(Map<String, dynamic> json) => _ChatSession(
