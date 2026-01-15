@@ -20,6 +20,19 @@ class ChatSessionSettings(BaseModel):
     voice_id: Optional[str] = None
     voice_frequency: VoiceFrequency = VoiceFrequency.OCCASIONALLY
 
+class ChatSessionSettingsUpdate(BaseModel):
+    is_pinned: Optional[bool] = None
+    is_blocked: Optional[bool] = None
+    allow_stickers: Optional[bool] = None
+    allow_nudge: Optional[bool] = None
+    allow_action_desc: Optional[bool] = None
+    max_reply_tokens: Optional[int] = None
+    context_window_size: Optional[int] = None
+    auto_summary_enabled: Optional[bool] = None
+    auto_summary_threshold: Optional[int] = None
+    voice_id: Optional[str] = None
+    voice_frequency: Optional[VoiceFrequency] = None
+
 class ChatSessionBase(BaseModel):
     title: Optional[str] = None
     status: str = "active"
