@@ -32,8 +32,10 @@ mixin _$ChatSessionSettings {
   bool get autoSummaryEnabled;
   @JsonKey(name: 'auto_summary_threshold')
   int get autoSummaryThreshold;
-  @JsonKey(name: 'voice_reply_frequency')
-  String get voiceReplyFrequency;
+  @JsonKey(name: 'voice_id')
+  String? get voiceId;
+  @JsonKey(name: 'voice_frequency')
+  String get voiceFrequency;
 
   /// Create a copy of ChatSessionSettings
   /// with the given fields replaced by the non-null parameter values.
@@ -69,8 +71,9 @@ mixin _$ChatSessionSettings {
                 other.autoSummaryEnabled == autoSummaryEnabled) &&
             (identical(other.autoSummaryThreshold, autoSummaryThreshold) ||
                 other.autoSummaryThreshold == autoSummaryThreshold) &&
-            (identical(other.voiceReplyFrequency, voiceReplyFrequency) ||
-                other.voiceReplyFrequency == voiceReplyFrequency));
+            (identical(other.voiceId, voiceId) || other.voiceId == voiceId) &&
+            (identical(other.voiceFrequency, voiceFrequency) ||
+                other.voiceFrequency == voiceFrequency));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -86,11 +89,12 @@ mixin _$ChatSessionSettings {
       contextWindowSize,
       autoSummaryEnabled,
       autoSummaryThreshold,
-      voiceReplyFrequency);
+      voiceId,
+      voiceFrequency);
 
   @override
   String toString() {
-    return 'ChatSessionSettings(isPinned: $isPinned, isBlocked: $isBlocked, allowStickers: $allowStickers, allowNudge: $allowNudge, allowActionDesc: $allowActionDesc, maxReplyTokens: $maxReplyTokens, contextWindowSize: $contextWindowSize, autoSummaryEnabled: $autoSummaryEnabled, autoSummaryThreshold: $autoSummaryThreshold, voiceReplyFrequency: $voiceReplyFrequency)';
+    return 'ChatSessionSettings(isPinned: $isPinned, isBlocked: $isBlocked, allowStickers: $allowStickers, allowNudge: $allowNudge, allowActionDesc: $allowActionDesc, maxReplyTokens: $maxReplyTokens, contextWindowSize: $contextWindowSize, autoSummaryEnabled: $autoSummaryEnabled, autoSummaryThreshold: $autoSummaryThreshold, voiceId: $voiceId, voiceFrequency: $voiceFrequency)';
   }
 }
 
@@ -110,7 +114,8 @@ abstract mixin class $ChatSessionSettingsCopyWith<$Res> {
       @JsonKey(name: 'context_window_size') int contextWindowSize,
       @JsonKey(name: 'auto_summary_enabled') bool autoSummaryEnabled,
       @JsonKey(name: 'auto_summary_threshold') int autoSummaryThreshold,
-      @JsonKey(name: 'voice_reply_frequency') String voiceReplyFrequency});
+      @JsonKey(name: 'voice_id') String? voiceId,
+      @JsonKey(name: 'voice_frequency') String voiceFrequency});
 }
 
 /// @nodoc
@@ -135,7 +140,8 @@ class _$ChatSessionSettingsCopyWithImpl<$Res>
     Object? contextWindowSize = null,
     Object? autoSummaryEnabled = null,
     Object? autoSummaryThreshold = null,
-    Object? voiceReplyFrequency = null,
+    Object? voiceId = freezed,
+    Object? voiceFrequency = null,
   }) {
     return _then(_self.copyWith(
       isPinned: null == isPinned
@@ -174,9 +180,13 @@ class _$ChatSessionSettingsCopyWithImpl<$Res>
           ? _self.autoSummaryThreshold
           : autoSummaryThreshold // ignore: cast_nullable_to_non_nullable
               as int,
-      voiceReplyFrequency: null == voiceReplyFrequency
-          ? _self.voiceReplyFrequency
-          : voiceReplyFrequency // ignore: cast_nullable_to_non_nullable
+      voiceId: freezed == voiceId
+          ? _self.voiceId
+          : voiceId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      voiceFrequency: null == voiceFrequency
+          ? _self.voiceFrequency
+          : voiceFrequency // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -285,7 +295,8 @@ extension ChatSessionSettingsPatterns on ChatSessionSettings {
             @JsonKey(name: 'context_window_size') int contextWindowSize,
             @JsonKey(name: 'auto_summary_enabled') bool autoSummaryEnabled,
             @JsonKey(name: 'auto_summary_threshold') int autoSummaryThreshold,
-            @JsonKey(name: 'voice_reply_frequency') String voiceReplyFrequency)?
+            @JsonKey(name: 'voice_id') String? voiceId,
+            @JsonKey(name: 'voice_frequency') String voiceFrequency)?
         $default, {
     required TResult orElse(),
   }) {
@@ -302,7 +313,8 @@ extension ChatSessionSettingsPatterns on ChatSessionSettings {
             _that.contextWindowSize,
             _that.autoSummaryEnabled,
             _that.autoSummaryThreshold,
-            _that.voiceReplyFrequency);
+            _that.voiceId,
+            _that.voiceFrequency);
       case _:
         return orElse();
     }
@@ -333,7 +345,8 @@ extension ChatSessionSettingsPatterns on ChatSessionSettings {
             @JsonKey(name: 'context_window_size') int contextWindowSize,
             @JsonKey(name: 'auto_summary_enabled') bool autoSummaryEnabled,
             @JsonKey(name: 'auto_summary_threshold') int autoSummaryThreshold,
-            @JsonKey(name: 'voice_reply_frequency') String voiceReplyFrequency)
+            @JsonKey(name: 'voice_id') String? voiceId,
+            @JsonKey(name: 'voice_frequency') String voiceFrequency)
         $default,
   ) {
     final _that = this;
@@ -349,7 +362,8 @@ extension ChatSessionSettingsPatterns on ChatSessionSettings {
             _that.contextWindowSize,
             _that.autoSummaryEnabled,
             _that.autoSummaryThreshold,
-            _that.voiceReplyFrequency);
+            _that.voiceId,
+            _that.voiceFrequency);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -379,7 +393,8 @@ extension ChatSessionSettingsPatterns on ChatSessionSettings {
             @JsonKey(name: 'context_window_size') int contextWindowSize,
             @JsonKey(name: 'auto_summary_enabled') bool autoSummaryEnabled,
             @JsonKey(name: 'auto_summary_threshold') int autoSummaryThreshold,
-            @JsonKey(name: 'voice_reply_frequency') String voiceReplyFrequency)?
+            @JsonKey(name: 'voice_id') String? voiceId,
+            @JsonKey(name: 'voice_frequency') String voiceFrequency)?
         $default,
   ) {
     final _that = this;
@@ -395,7 +410,8 @@ extension ChatSessionSettingsPatterns on ChatSessionSettings {
             _that.contextWindowSize,
             _that.autoSummaryEnabled,
             _that.autoSummaryThreshold,
-            _that.voiceReplyFrequency);
+            _that.voiceId,
+            _that.voiceFrequency);
       case _:
         return null;
     }
@@ -415,8 +431,8 @@ class _ChatSessionSettings implements ChatSessionSettings {
       @JsonKey(name: 'context_window_size') this.contextWindowSize = 10,
       @JsonKey(name: 'auto_summary_enabled') this.autoSummaryEnabled = false,
       @JsonKey(name: 'auto_summary_threshold') this.autoSummaryThreshold = 20,
-      @JsonKey(name: 'voice_reply_frequency')
-      this.voiceReplyFrequency = 'occasionally'});
+      @JsonKey(name: 'voice_id') this.voiceId,
+      @JsonKey(name: 'voice_frequency') this.voiceFrequency = 'occasionally'});
   factory _ChatSessionSettings.fromJson(Map<String, dynamic> json) =>
       _$ChatSessionSettingsFromJson(json);
 
@@ -448,8 +464,11 @@ class _ChatSessionSettings implements ChatSessionSettings {
   @JsonKey(name: 'auto_summary_threshold')
   final int autoSummaryThreshold;
   @override
-  @JsonKey(name: 'voice_reply_frequency')
-  final String voiceReplyFrequency;
+  @JsonKey(name: 'voice_id')
+  final String? voiceId;
+  @override
+  @JsonKey(name: 'voice_frequency')
+  final String voiceFrequency;
 
   /// Create a copy of ChatSessionSettings
   /// with the given fields replaced by the non-null parameter values.
@@ -490,8 +509,9 @@ class _ChatSessionSettings implements ChatSessionSettings {
                 other.autoSummaryEnabled == autoSummaryEnabled) &&
             (identical(other.autoSummaryThreshold, autoSummaryThreshold) ||
                 other.autoSummaryThreshold == autoSummaryThreshold) &&
-            (identical(other.voiceReplyFrequency, voiceReplyFrequency) ||
-                other.voiceReplyFrequency == voiceReplyFrequency));
+            (identical(other.voiceId, voiceId) || other.voiceId == voiceId) &&
+            (identical(other.voiceFrequency, voiceFrequency) ||
+                other.voiceFrequency == voiceFrequency));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -507,11 +527,12 @@ class _ChatSessionSettings implements ChatSessionSettings {
       contextWindowSize,
       autoSummaryEnabled,
       autoSummaryThreshold,
-      voiceReplyFrequency);
+      voiceId,
+      voiceFrequency);
 
   @override
   String toString() {
-    return 'ChatSessionSettings(isPinned: $isPinned, isBlocked: $isBlocked, allowStickers: $allowStickers, allowNudge: $allowNudge, allowActionDesc: $allowActionDesc, maxReplyTokens: $maxReplyTokens, contextWindowSize: $contextWindowSize, autoSummaryEnabled: $autoSummaryEnabled, autoSummaryThreshold: $autoSummaryThreshold, voiceReplyFrequency: $voiceReplyFrequency)';
+    return 'ChatSessionSettings(isPinned: $isPinned, isBlocked: $isBlocked, allowStickers: $allowStickers, allowNudge: $allowNudge, allowActionDesc: $allowActionDesc, maxReplyTokens: $maxReplyTokens, contextWindowSize: $contextWindowSize, autoSummaryEnabled: $autoSummaryEnabled, autoSummaryThreshold: $autoSummaryThreshold, voiceId: $voiceId, voiceFrequency: $voiceFrequency)';
   }
 }
 
@@ -533,7 +554,8 @@ abstract mixin class _$ChatSessionSettingsCopyWith<$Res>
       @JsonKey(name: 'context_window_size') int contextWindowSize,
       @JsonKey(name: 'auto_summary_enabled') bool autoSummaryEnabled,
       @JsonKey(name: 'auto_summary_threshold') int autoSummaryThreshold,
-      @JsonKey(name: 'voice_reply_frequency') String voiceReplyFrequency});
+      @JsonKey(name: 'voice_id') String? voiceId,
+      @JsonKey(name: 'voice_frequency') String voiceFrequency});
 }
 
 /// @nodoc
@@ -558,7 +580,8 @@ class __$ChatSessionSettingsCopyWithImpl<$Res>
     Object? contextWindowSize = null,
     Object? autoSummaryEnabled = null,
     Object? autoSummaryThreshold = null,
-    Object? voiceReplyFrequency = null,
+    Object? voiceId = freezed,
+    Object? voiceFrequency = null,
   }) {
     return _then(_ChatSessionSettings(
       isPinned: null == isPinned
@@ -597,9 +620,13 @@ class __$ChatSessionSettingsCopyWithImpl<$Res>
           ? _self.autoSummaryThreshold
           : autoSummaryThreshold // ignore: cast_nullable_to_non_nullable
               as int,
-      voiceReplyFrequency: null == voiceReplyFrequency
-          ? _self.voiceReplyFrequency
-          : voiceReplyFrequency // ignore: cast_nullable_to_non_nullable
+      voiceId: freezed == voiceId
+          ? _self.voiceId
+          : voiceId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      voiceFrequency: null == voiceFrequency
+          ? _self.voiceFrequency
+          : voiceFrequency // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }

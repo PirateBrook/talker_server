@@ -20,10 +20,16 @@ abstract class ChatSessionSettings with _$ChatSessionSettings {
     @JsonKey(name: 'auto_summary_threshold')
     @Default(20)
     int autoSummaryThreshold,
+    @JsonKey(name: 'voice_id') String? voiceId,
+    @JsonKey(name: 'voice_frequency')
+    @Default('occasionally')
+    String voiceFrequency,
   }) = _ChatSessionSettings;
 
   factory ChatSessionSettings.fromJson(Map<String, dynamic> json) =>
       _$ChatSessionSettingsFromJson(json);
+
+  Map<String, dynamic> toJson() => toJson();
 }
 
 @freezed
@@ -52,6 +58,8 @@ abstract class ChatSession with _$ChatSession {
 
   factory ChatSession.fromJson(Map<String, dynamic> json) =>
       _$ChatSessionFromJson(json);
+
+  Map<String, dynamic> toJson() => toJson();
 }
 
 @freezed
@@ -68,4 +76,6 @@ abstract class ChatSessionUpdate with _$ChatSessionUpdate {
 
   factory ChatSessionUpdate.fromJson(Map<String, dynamic> json) =>
       _$ChatSessionUpdateFromJson(json);
+
+  Map<String, dynamic> toJson() => toJson();
 }
