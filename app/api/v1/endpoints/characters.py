@@ -6,6 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.schemas.character import Character, CharacterCreate, CharacterUpdate
 from app.services.character_service import character_service
+from app.api import deps
+from app.models.user import User
 
 router = APIRouter()
 
@@ -53,6 +55,7 @@ async def update_character(
     db: AsyncSession = Depends(get_db),
     character_id: uuid.UUID,
     character_in: CharacterUpdate,
+    current_user: User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Update a character.

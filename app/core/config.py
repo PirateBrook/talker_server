@@ -64,6 +64,9 @@ class Settings(BaseSettings):
     ME_CONFIG_MONGODB_PORT: int = 27017
     ME_CONFIG_BASICAUTH: bool = False
 
+    # Debug
+    DEBUG_REQUEST_BODY: bool = False
+
     class Config:
         env_file = ".env"
         case_sensitive = True

@@ -58,7 +58,15 @@ abstract class Character with _$Character {
   factory Character.fromJson(Map<String, dynamic> json) =>
       _$CharacterFromJson(json);
 
-  Map<String, dynamic> toJson() => toJson();
+  Map<String, dynamic> toJson() {
+    // Cast to concrete implementation to satisfy freezed generated toJson
+    final json = (this as _Character).toJson();
+    // Server expects tags as list of strings (names) for updates/creates
+    if (json['tags'] is List) {
+      json['tags'] = tags.map((t) => t.name).toList();
+    }
+    return json;
+  }
 }
 
 extension CharacterExtension on Character {
